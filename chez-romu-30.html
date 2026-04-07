@@ -1,0 +1,3433 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chez Romu — Salon de Coiffure</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --gold-dark: #8a6d2a;
+    --black: #0a0a0a;
+    --dark: #111111;
+    --dark2: #1a1a1a;
+    --dark3: #222222;
+    --text: #e8e0d0;
+    --text-muted: #888880;
+    --white: #f5f0e8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background: var(--black);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ---- PAGES ---- */
+  .page { display: none; min-height: 100vh; }
+  .page.active { display: block; }
+
+  /* ---- HERO ---- */
+  #page-home {
+    background: var(--black);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at 20% 50%, rgba(201,168,76,0.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(201,168,76,0.04) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .hero-lines {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: repeating-linear-gradient(
+      90deg, transparent, transparent 80px, rgba(201,168,76,0.03) 80px, rgba(201,168,76,0.03) 81px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .home-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 40px 24px;
+    text-align: center;
+  }
+
+  .salon-badge {
+    display: inline-block;
+    border: 1px solid var(--gold-dark);
+    color: var(--gold);
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    padding: 6px 18px;
+    margin-bottom: 28px;
+    animation: fadeIn 0.8s ease;
+  }
+
+  .salon-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(52px, 15vw, 88px);
+    font-weight: 300;
+    line-height: 0.95;
+    letter-spacing: -1px;
+    color: var(--white);
+    animation: fadeUp 0.9s ease 0.1s both;
+  }
+
+  .salon-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .salon-subtitle {
+    font-size: 11px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-top: 16px;
+    margin-bottom: 52px;
+    animation: fadeUp 0.9s ease 0.2s both;
+  }
+
+  .gold-divider {
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 0 auto 48px;
+    animation: fadeIn 1s ease 0.3s both;
+  }
+
+  .home-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+    max-width: 320px;
+    animation: fadeUp 0.9s ease 0.4s both;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    color: var(--black);
+    border: none;
+    padding: 18px 32px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: rgba(255,255,255,0.15);
+    transform: skewX(-20deg);
+    transition: left 0.4s ease;
+  }
+
+  .btn-primary:hover::after { left: 100%; }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(201,168,76,0.3); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid #333;
+    padding: 16px 32px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .btn-secondary:hover { border-color: var(--gold-dark); color: var(--gold); }
+
+  .home-footer {
+    margin-top: 60px;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    animation: fadeIn 1s ease 0.6s both;
+  }
+
+  /* ---- HEADER NAV ---- */
+  .app-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,10,10,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid #1e1e1e;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+  }
+
+  .header-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--gold);
+    letter-spacing: 1px;
+  }
+
+  .header-back {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s;
+  }
+  .header-back:hover { color: var(--gold); }
+
+  /* ---- BOOKING PAGE ---- */
+  .booking-container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 24px 20px 60px;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--white);
+    margin-bottom: 6px;
+  }
+
+  .section-sub {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 28px;
+  }
+
+  /* Steps */
+  .steps-bar {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 32px;
+  }
+
+  .step-dot {
+    flex: 1;
+    height: 2px;
+    background: #222;
+    border-radius: 2px;
+    transition: background 0.3s;
+  }
+  .step-dot.active { background: var(--gold); }
+  .step-dot.done { background: var(--gold-dark); }
+
+  .step-panel { display: none; }
+  .step-panel.active { display: block; }
+
+  /* Cards */
+  .card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .card-grid.single { grid-template-columns: 1fr; }
+
+  .select-card {
+    background: var(--dark2);
+    border: 1px solid #2a2a2a;
+    border-radius: 4px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+  }
+
+  .select-card:hover { border-color: var(--gold-dark); background: var(--dark3); }
+  .select-card.selected { border-color: var(--gold); background: rgba(201,168,76,0.08); }
+
+  .card-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+
+  .card-price {
+    font-size: 13px;
+    color: var(--gold);
+    font-weight: 500;
+  }
+
+  .card-duration {
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    margin-top: 3px;
+  }
+
+  /* Coiffeuse card */
+  .coiffeuse-card {
+    background: var(--dark2);
+    border: 1px solid #2a2a2a;
+    border-radius: 4px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .coiffeuse-card:hover { border-color: var(--gold-dark); }
+  .coiffeuse-card.selected { border-color: var(--gold); background: rgba(201,168,76,0.08); }
+
+  .coiffeuse-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold-dark), var(--dark3));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    color: var(--gold-light);
+    flex-shrink: 0;
+  }
+
+  .coiffeuse-info { flex: 1; }
+  .coiffeuse-name { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--white); }
+  .coiffeuse-tag { font-size: 10px; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; margin-top: 2px; }
+
+  /* Time slots */
+  .time-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .time-slot {
+    background: var(--dark2);
+    border: 1px solid #2a2a2a;
+    border-radius: 4px;
+    padding: 12px 8px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+
+  .time-slot:hover { border-color: var(--gold-dark); color: var(--text); }
+  .time-slot.selected { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.08); }
+  .time-slot.taken { opacity: 0.3; cursor: not-allowed; background: #111; }
+
+  /* Date picker */
+  .date-row {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    margin-bottom: 24px;
+    scrollbar-width: none;
+  }
+  .date-row::-webkit-scrollbar { display: none; }
+
+  .date-chip {
+    flex-shrink: 0;
+    background: var(--dark2);
+    border: 1px solid #2a2a2a;
+    border-radius: 4px;
+    padding: 12px 14px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    min-width: 56px;
+  }
+
+  .date-chip:hover { border-color: var(--gold-dark); }
+  .date-chip.selected { border-color: var(--gold); background: rgba(201,168,76,0.08); }
+
+  .date-day { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); }
+  .date-num { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: var(--white); line-height: 1.2; }
+
+  /* Form */
+  .form-field { margin-bottom: 16px; }
+
+  .form-label {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .form-input {
+    width: 100%;
+    background: var(--dark2);
+    border: 1px solid #2a2a2a;
+    border-radius: 4px;
+    padding: 14px 16px;
+    color: var(--text);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .form-input:focus { border-color: var(--gold); }
+  .form-input::placeholder { color: #444; }
+
+  /* Summary */
+  .summary-box {
+    background: var(--dark2);
+    border: 1px solid #2a2a2a;
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #1e1e1e;
+  }
+
+  .summary-row:last-child { border-bottom: none; }
+  .summary-label { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .summary-value { font-size: 14px; color: var(--white); }
+  .summary-price { font-size: 18px; color: var(--gold); font-family: 'Cormorant Garamond', serif; font-weight: 600; }
+
+  /* Nav bottom */
+  .nav-bottom {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  .btn-next {
+    flex: 1;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    color: var(--black);
+    border: none;
+    padding: 16px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s;
+  }
+
+  .btn-next:hover { opacity: 0.9; }
+  .btn-next:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .btn-prev {
+    background: transparent;
+    border: 1px solid #333;
+    color: var(--text-muted);
+    padding: 16px 20px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s;
+  }
+
+  .btn-prev:hover { border-color: var(--gold-dark); color: var(--gold); }
+
+  /* Confirmation */
+  .confirm-box {
+    text-align: center;
+    padding: 40px 24px;
+    animation: fadeUp 0.5s ease;
+  }
+
+  .confirm-icon {
+    width: 72px;
+    height: 72px;
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin: 0 auto 24px;
+    animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .confirm-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    font-weight: 300;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+
+  .confirm-sub { font-size: 12px; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 32px; }
+
+  .confirm-card {
+    background: var(--dark2);
+    border: 1px solid var(--gold-dark);
+    border-radius: 4px;
+    padding: 20px;
+    text-align: left;
+    margin-bottom: 28px;
+  }
+
+  /* ---- PRO PAGE ---- */
+  .pro-container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 24px 20px 60px;
+  }
+
+  .pro-login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 70vh;
+    gap: 16px;
+  }
+
+  .pro-lock {
+    font-size: 40px;
+    margin-bottom: 8px;
+  }
+
+  .pro-tabs {
+    display: flex;
+    gap: 2px;
+    background: var(--dark2);
+    border-radius: 4px;
+    padding: 4px;
+    margin-bottom: 24px;
+  }
+
+  .pro-tab {
+    flex: 1;
+    padding: 10px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.2s;
+  }
+
+  .pro-tab.active { background: var(--dark3); color: var(--gold); }
+
+  .pro-panel { display: none; }
+  .pro-panel.active { display: block; }
+
+  /* RDV List */
+  .rdv-card {
+    background: var(--dark2);
+    border: 1px solid #2a2a2a;
+    border-radius: 4px;
+    padding: 16px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    transition: border-color 0.2s;
+  }
+
+  .rdv-card:hover { border-color: #333; }
+
+  .rdv-time {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    color: var(--gold);
+    font-weight: 600;
+    min-width: 56px;
+  }
+
+  .rdv-info { flex: 1; }
+  .rdv-client { font-size: 14px; color: var(--white); margin-bottom: 3px; }
+  .rdv-detail { font-size: 11px; color: var(--text-muted); }
+
+  .rdv-badge {
+    background: rgba(201,168,76,0.12);
+    border: 1px solid var(--gold-dark);
+    color: var(--gold);
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 2px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .btn-delete {
+    background: none;
+    border: none;
+    color: #444;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px 8px;
+    transition: color 0.2s;
+  }
+  .btn-delete:hover { color: #c0392b; }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+  }
+
+  .empty-icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-text { font-size: 13px; letter-spacing: 1px; }
+
+  /* Filter coiffeuse */
+  .coif-filter {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .filter-chip {
+    background: var(--dark2);
+    border: 1px solid #2a2a2a;
+    color: var(--text-muted);
+    font-size: 11px;
+    padding: 7px 14px;
+    border-radius: 2px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+  }
+
+  .filter-chip:hover { border-color: var(--gold-dark); color: var(--text); }
+  .filter-chip.active { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.08); }
+
+  /* Stats */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    background: var(--dark2);
+    border: 1px solid #2a2a2a;
+    border-radius: 4px;
+    padding: 18px 16px;
+  }
+
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    color: var(--gold);
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .stat-label { font-size: 10px; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--dark3);
+    border: 1px solid var(--gold-dark);
+    color: var(--gold);
+    padding: 12px 24px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    z-index: 999;
+    transition: transform 0.3s ease;
+    white-space: nowrap;
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* Animations */
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  @keyframes slideIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+  @keyframes slideInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+
+  .page.active { animation: slideIn 0.3s ease; }
+
+  /* Planning */
+  .planning-table { width:100%; border-collapse: collapse; font-size:11px; }
+  .planning-table th { 
+    background:#f8f8f8; 
+    color:#333; 
+    padding:8px 4px; 
+    text-align:center; 
+    border:1px solid #ddd;
+    font-weight:600;
+    font-size:10px;
+    letter-spacing:1px;
+  }
+  .planning-table td { 
+    border:1px solid #e0e0e0; 
+    padding:4px; 
+    vertical-align:top; 
+    min-height:60px;
+    background:#fff;
+    min-width:40px;
+  }
+  .planning-coif-label {
+    background:#f0f0f0;
+    color:#333;
+    font-weight:600;
+    font-size:11px;
+    padding:8px 6px;
+    border:1px solid #ddd;
+    text-align:center;
+    white-space:nowrap;
+  }
+  .planning-cell-rdv {
+    font-size:10px;
+    padding:3px 4px;
+    border-radius:3px;
+    margin-bottom:2px;
+    line-height:1.3;
+    cursor:pointer;
+  }
+  .planning-julie { background:#ffe0b2; color:#6d3b00; border-left:3px solid #ff9800; }
+  .planning-pauline { background:#e1bee7; color:#4a0072; border-left:3px solid #9c27b0; }
+  .planning-manon { background:#d6ffd6; color:#1b5e20; border-left:3px solid #4caf50; }
+  .planning-other { background:#e3f2fd; color:#0d47a1; border-left:3px solid #2196f3; }
+  .planning-bloque { background:#ffebee; color:#b71c1c; border-left:3px solid #f44336; font-style:italic; }
+
+  .category-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold-dark);
+    margin: 20px 0 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #1e1e1e;
+  }
+
+  /* Quiz styles */
+  .quiz-option {
+    background: var(--dark2);
+    border: 1px solid #2a2a2a;
+    border-radius: 4px;
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 10px;
+  }
+  .quiz-option:hover { border-color: var(--gold-dark); background: var(--dark3); }
+  .quiz-option.selected { border-color: var(--gold); background: rgba(201,168,76,0.08); }
+  .quiz-icon { font-size: 24px; width: 36px; text-align: center; }
+  .quiz-text { flex: 1; font-size: 14px; color: var(--text); }
+
+  .quiz-progress {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 24px;
+  }
+  .quiz-bar {
+    flex: 1;
+    height: 3px;
+    background: #222;
+    border-radius: 2px;
+    transition: background 0.3s;
+  }
+  .quiz-bar.done { background: var(--gold); }
+
+  .result-card {
+    background: linear-gradient(135deg, rgba(201,168,76,0.12), rgba(201,168,76,0.04));
+    border: 1px solid var(--gold-dark);
+    border-radius: 8px;
+    padding: 28px 24px;
+    text-align: center;
+    animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  .result-emoji { font-size: 52px; margin-bottom: 16px; }
+  .result-title { font-family: 'Cormorant Garamond', serif; font-size: 32px; color: var(--white); margin-bottom: 8px; }
+  .result-desc { font-size: 13px; color: var(--text-muted); line-height: 1.7; margin-bottom: 20px; }
+</style>
+</head>
+<body>
+
+<div class="hero-bg"></div>
+<div class="hero-lines"></div>
+<div id="toast" class="toast"></div>
+
+<!-- MUSIQUE AMBIANTE -->
+<audio id="bg-music" loop>
+  <source src="https://www.bensound.com/bensound-music/bensound-romantic.mp3" type="audio/mpeg">
+</audio>
+<div id="music-btn" onclick="toggleMusic()" style="position:fixed;bottom:20px;right:20px;z-index:999;width:44px;height:44px;border-radius:50%;background:rgba(201,168,76,0.15);border:1px solid var(--gold-dark);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;backdrop-filter:blur(8px);" title="Musique">🎵</div>
+
+<!-- PAGE HOME -->
+<div id="page-home" class="page active">
+  <!-- Hero Photo -->
+  <div style="position:relative;width:100%;height:260px;overflow:hidden;">
+    <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&q=80" 
+         alt="Salon Chez Romu"
+         style="width:100%;height:100%;object-fit:cover;filter:brightness(0.55);">
+    <div style="position:absolute;inset:0;background:linear-gradient(to bottom, transparent 40%, var(--black) 100%);"></div>
+    <div style="position:absolute;bottom:20px;left:0;right:0;text-align:center;">
+      <div class="salon-badge" style="margin-bottom:10px;">✦ Salon de Coiffure ✦</div>
+      <h1 class="salon-title" style="font-size:clamp(42px,12vw,72px);">Chez <em>Romu</em></h1>
+    </div>
+  </div>
+
+  <div style="padding:20px 0 60px;">
+    <p class="salon-subtitle" style="text-align:center;margin-bottom:20px;">L'art de la coiffure depuis toujours</p>
+    <div class="gold-divider"></div>
+
+    <div style="max-width:480px;margin:0 auto;padding:0 20px;">
+
+      <!-- RDV — pleine largeur -->
+      <div onclick="goTo('booking')" style="background:linear-gradient(135deg,var(--gold-dark),#5a3e10);border-radius:24px;padding:32px 28px;margin-bottom:28px;cursor:pointer;position:relative;overflow:hidden;">
+        <div style="position:absolute;right:-10px;top:-10px;font-size:100px;opacity:0.08;">✂️</div>
+        <div style="font-size:11px;letter-spacing:3px;color:rgba(255,255,255,0.6);margin-bottom:10px;text-transform:uppercase;">Réservez en ligne</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:32px;color:#fff;font-weight:300;line-height:1.2;">Prendre un<br>rendez-vous</div>
+        <div style="margin-top:18px;display:inline-block;background:rgba(255,255,255,0.15);padding:10px 22px;border-radius:30px;font-size:12px;color:#fff;letter-spacing:2px;">RÉSERVER →</div>
+      </div>
+
+      <!-- Quiz — 75% à droite -->
+      <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+        <div onclick="goTo('quiz')" style="width:75%;background:var(--dark2);border:1px solid #2a2a2a;border-radius:24px;padding:26px 22px;cursor:pointer;">
+          <div style="font-size:36px;margin-bottom:12px;">🎨</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--white);">Quiz Style</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">Trouve le look parfait pour toi</div>
+        </div>
+      </div>
+
+      <!-- Boutique — 75% à gauche -->
+      <div style="display:flex;justify-content:flex-start;margin-bottom:16px;">
+        <div onclick="goTo('boutique')" style="width:75%;background:var(--dark2);border:1px solid #2a2a2a;border-radius:24px;padding:26px 22px;cursor:pointer;">
+          <div style="font-size:36px;margin-bottom:12px;">🧴</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--white);">Boutique</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">Produits & promos</div>
+        </div>
+      </div>
+
+      <!-- Avis — 75% à droite -->
+      <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+        <div onclick="goTo('avis')" style="width:75%;background:var(--dark2);border:1px solid #2a2a2a;border-radius:24px;padding:26px 22px;cursor:pointer;">
+          <div style="font-size:36px;margin-bottom:12px;">⭐</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--white);">Avis clients</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">Ce que disent nos clients</div>
+        </div>
+      </div>
+
+      <!-- Appel — 75% à gauche -->
+      <div style="display:flex;justify-content:flex-start;margin-bottom:16px;">
+        <a href="tel:+33600000000" style="text-decoration:none;width:75%;">
+          <div style="background:var(--dark2);border:1px solid #2a2a2a;border-radius:24px;padding:26px 22px;cursor:pointer;">
+            <div style="font-size:36px;margin-bottom:12px;">📞</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--white);">Appeler</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">Le salon</div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Fidélité — 75% à droite -->
+      <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+        <div onclick="goTo('fidelite')" style="width:75%;background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(201,168,76,0.05));border:1px solid var(--gold-dark);border-radius:24px;padding:26px 22px;cursor:pointer;">
+          <div style="font-size:36px;margin-bottom:12px;">🎁</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--white);">Carte Fidélité</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">10ème coupe offerte !</div>
+        </div>
+      </div>
+
+      <!-- Contact — 75% à gauche -->
+      <div style="display:flex;justify-content:flex-start;margin-bottom:16px;">
+        <div onclick="goTo('contact')" style="width:75%;background:var(--dark2);border:1px solid #2a2a2a;border-radius:24px;padding:26px 22px;cursor:pointer;">
+          <div style="font-size:36px;margin-bottom:12px;">✉️</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--white);">Contact</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">Nous écrire un message</div>
+        </div>
+      </div>
+
+      <!-- Essayage — 75% à droite -->
+      <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+        <div onclick="goTo('essayage')" style="width:75%;background:linear-gradient(135deg,rgba(138,109,42,0.2),rgba(10,10,10,0.9));border:1px solid var(--gold-dark);border-radius:24px;padding:26px 22px;cursor:pointer;">
+          <div style="font-size:36px;margin-bottom:12px;">💇</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--white);">Essayage Virtuel</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">Visualise ta future coiffure</div>
+        </div>
+      </div>
+
+      <!-- Roue — 75% à gauche -->
+      <div style="display:flex;justify-content:flex-start;margin-bottom:16px;">
+        <div onclick="goTo('roue')" style="width:75%;background:linear-gradient(135deg,rgba(156,39,176,0.2),rgba(10,10,10,0.9));border:1px solid #9c27b0;border-radius:24px;padding:26px 22px;cursor:pointer;">
+          <div style="font-size:36px;margin-bottom:12px;">🎰</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--white);">Roue des Promos</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">Tente ta chance ce mois !</div>
+        </div>
+      </div>
+
+      <!-- Tarifs — 75% à droite -->
+      <div style="display:flex;justify-content:flex-end;margin-bottom:28px;">
+        <div onclick="goTo('tarifs')" style="width:75%;background:var(--dark2);border:1px solid #2a2a2a;border-radius:24px;padding:26px 22px;cursor:pointer;">
+          <div style="font-size:36px;margin-bottom:12px;">💰</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--white);">Nos Tarifs</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">Tous nos services & prix</div>
+        </div>
+      </div>
+
+      <!-- Adresse -->
+      <div style="background:var(--dark2);border:1px solid #1e1e1e;border-radius:20px;padding:18px 22px;margin-bottom:24px;display:flex;align-items:center;gap:14px;">
+        <div style="font-size:22px;">📍</div>
+        <div>
+          <div style="font-size:13px;color:var(--white);font-family:'Cormorant Garamond',serif;">Avenue du Rigolo · 13190 Lyon</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:3px;">Mardi – Samedi · 9h – 19h</div>
+        </div>
+      </div>
+
+      <!-- Stats animées -->
+      <div style="background:var(--dark2);border:1px solid #1e1e1e;border-radius:20px;padding:20px;margin-bottom:24px;">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;">
+          <div>
+            <div class="stat-count" data-target="3" style="font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--gold);font-weight:600;">0</div>
+            <div style="font-size:10px;color:var(--text-muted);letter-spacing:1px;margin-top:2px;">Coiffeuses</div>
+          </div>
+          <div>
+            <div class="stat-count" data-target="1250" style="font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--gold);font-weight:600;">0</div>
+            <div style="font-size:10px;color:var(--text-muted);letter-spacing:1px;margin-top:2px;">Clients</div>
+          </div>
+          <div>
+            <div class="stat-count" data-target="8" style="font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--gold);font-weight:600;">0</div>
+            <div style="font-size:10px;color:var(--text-muted);letter-spacing:1px;margin-top:2px;">Ans</div>
+          </div>
+          <div>
+            <div class="stat-count" data-target="1" style="font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--gold);font-weight:600;">0</div>
+            <div style="font-size:10px;color:var(--text-muted);letter-spacing:1px;margin-top:2px;">Salon</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Espace pro discret -->
+      <div style="text-align:center;">
+        <button class="btn-secondary" style="font-size:10px;opacity:0.3;border-radius:12px;padding:8px 24px;" onclick="goTo('pro-login')">Espace professionnel</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- PAGE BOUTIQUE -->
+<div id="page-boutique" class="page">
+  <div class="app-header">
+    <span class="header-logo">Chez Romu</span>
+    <button class="header-back" onclick="goTo('home')">← Retour</button>
+  </div>
+  <div class="booking-container">
+    <p class="section-sub">Produits & Offres</p>
+    <h2 class="section-title">Notre<br>Boutique</h2>
+
+    <!-- Promo banner -->
+    <div style="background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(201,168,76,0.05));border:1px solid var(--gold-dark);border-radius:4px;padding:16px 20px;margin-bottom:28px;display:flex;align-items:center;gap:14px;">
+      <span style="font-size:28px;">🔥</span>
+      <div>
+        <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;">Offre du mois</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--white);">-20% sur tout le rayon Kérastase</div>
+      </div>
+    </div>
+
+    <p class="category-label">Shampoings</p>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px;">
+
+      <div style="background:var(--dark2);border:1px solid #2a2a2a;border-radius:6px;overflow:hidden;display:flex;align-items:stretch;">
+        <img src="https://images.unsplash.com/photo-1585751119414-ef2636f8aede?w=200&q=80" alt="Kérastase Bain Riche" style="width:90px;height:90px;object-fit:cover;flex-shrink:0;">
+        <div style="padding:12px 14px;flex:1;display:flex;flex-direction:column;justify-content:center;">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--white);">Kérastase Bain Riche</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Cheveux secs & abîmés · 250ml</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:6px;">
+            <span style="font-size:11px;color:var(--text-muted);text-decoration:line-through;">24€</span>
+            <span style="font-size:18px;color:var(--gold);font-family:'Cormorant Garamond',serif;font-weight:600;">19€</span>
+            <span style="background:rgba(201,168,76,0.15);color:var(--gold);font-size:10px;padding:2px 7px;border-radius:2px;">-20%</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:var(--dark2);border:1px solid #2a2a2a;border-radius:6px;overflow:hidden;display:flex;align-items:stretch;">
+        <img src="https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=200&q=80" alt="Kérastase Première" style="width:90px;height:90px;object-fit:cover;flex-shrink:0;">
+        <div style="padding:12px 14px;flex:1;display:flex;flex-direction:column;justify-content:center;">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--white);">Kérastase Première</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Réparation décalcifiante · 500ml</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:6px;">
+            <span style="font-size:11px;color:var(--text-muted);text-decoration:line-through;">32€</span>
+            <span style="font-size:18px;color:var(--gold);font-family:'Cormorant Garamond',serif;font-weight:600;">25€</span>
+            <span style="background:rgba(201,168,76,0.15);color:var(--gold);font-size:10px;padding:2px 7px;border-radius:2px;">-20%</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:var(--dark2);border:1px solid #2a2a2a;border-radius:6px;overflow:hidden;display:flex;align-items:stretch;">
+        <img src="https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=200&q=80" alt="Redken All Soft" style="width:90px;height:90px;object-fit:cover;flex-shrink:0;">
+        <div style="padding:12px 14px;flex:1;display:flex;flex-direction:column;justify-content:center;">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--white);">Redken All Soft</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Cheveux résistants · 300ml</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:6px;">
+            <span style="font-size:11px;color:var(--text-muted);text-decoration:line-through;">22€</span>
+            <span style="font-size:18px;color:var(--gold);font-family:'Cormorant Garamond',serif;font-weight:600;">17€</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="category-label">Soins & Huiles</p>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px;">
+
+      <div style="background:var(--dark2);border:1px solid #2a2a2a;border-radius:6px;overflow:hidden;display:flex;align-items:stretch;">
+        <img src="https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?w=200&q=80" alt="Huile Moroccanoil" style="width:90px;height:90px;object-fit:cover;flex-shrink:0;">
+        <div style="padding:12px 14px;flex:1;display:flex;flex-direction:column;justify-content:center;">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--white);">Huile Moroccanoil</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Brillance & légèreté · 100ml</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:6px;">
+            <span style="font-size:11px;color:var(--text-muted);text-decoration:line-through;">38€</span>
+            <span style="font-size:18px;color:var(--gold);font-family:'Cormorant Garamond',serif;font-weight:600;">30€</span>
+            <span style="background:rgba(201,168,76,0.15);color:var(--gold);font-size:10px;padding:2px 7px;border-radius:2px;">-21%</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:var(--dark2);border:1px solid #2a2a2a;border-radius:6px;overflow:hidden;display:flex;align-items:stretch;">
+        <img src="https://images.unsplash.com/photo-1526045612212-70caf35c14df?w=200&q=80" alt="Masque Kérastase" style="width:90px;height:90px;object-fit:cover;flex-shrink:0;">
+        <div style="padding:12px 14px;flex:1;display:flex;flex-direction:column;justify-content:center;">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--white);">Masque Kérastase Nutritive</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Nutrition intense · 200ml</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:6px;">
+            <span style="font-size:18px;color:var(--gold);font-family:'Cormorant Garamond',serif;font-weight:600;">28€</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="background:rgba(201,168,76,0.06);border:1px solid #2a2a2a;border-radius:4px;padding:16px;text-align:center;margin-top:8px;">
+      <p style="font-size:12px;color:var(--text-muted);">Produits disponibles en salon · Demandez à Julie, Pauline ou Manon 💈</p>
+    </div>
+
+    <p class="category-label">Accessoires</p>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px;">
+
+      <div style="background:var(--dark2);border:1px solid #2a2a2a;border-radius:6px;overflow:hidden;display:flex;align-items:stretch;">
+        <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=200&q=80" alt="Brosse" style="width:90px;height:90px;object-fit:cover;flex-shrink:0;">
+        <div style="padding:12px 14px;flex:1;display:flex;flex-direction:column;justify-content:center;">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--white);">Brosse Babyliss Pro</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Brushing parfait · Poils naturels</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:6px;">
+            <span style="font-size:18px;color:var(--gold);font-family:'Cormorant Garamond',serif;font-weight:600;">18€</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:var(--dark2);border:1px solid #2a2a2a;border-radius:6px;overflow:hidden;display:flex;align-items:stretch;">
+        <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=200&q=80" alt="Peigne" style="width:90px;height:90px;object-fit:cover;flex-shrink:0;filter:hue-rotate(180deg);">
+        <div style="padding:12px 14px;flex:1;display:flex;flex-direction:column;justify-content:center;">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--white);">Peigne Kent Pro</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Dents larges · Anti-statique</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:6px;">
+            <span style="font-size:18px;color:var(--gold);font-family:'Cormorant Garamond',serif;font-weight:600;">9€</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="category-label">Coiffants & Gels</p>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px;">
+
+      <div style="background:var(--dark2);border:1px solid #2a2a2a;border-radius:6px;overflow:hidden;display:flex;align-items:stretch;">
+        <img src="https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?w=200&q=80" alt="Gel Schwarzkopf" style="width:90px;height:90px;object-fit:cover;flex-shrink:0;">
+        <div style="padding:12px 14px;flex:1;display:flex;flex-direction:column;justify-content:center;">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--white);">Gel Schwarzkopf Taft</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Fixation extra forte · 250ml</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:6px;">
+            <span style="font-size:18px;color:var(--gold);font-family:'Cormorant Garamond',serif;font-weight:600;">8€</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:var(--dark2);border:1px solid #2a2a2a;border-radius:6px;overflow:hidden;display:flex;align-items:stretch;">
+        <img src="https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=200&q=80" alt="Cire American Crew" style="width:90px;height:90px;object-fit:cover;flex-shrink:0;">
+        <div style="padding:12px 14px;flex:1;display:flex;flex-direction:column;justify-content:center;">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--white);">Cire American Crew</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Tenue naturelle · 85g</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:6px;">
+            <span style="font-size:11px;color:var(--text-muted);text-decoration:line-through;">18€</span>
+            <span style="font-size:18px;color:var(--gold);font-family:'Cormorant Garamond',serif;font-weight:600;">14€</span>
+            <span style="background:rgba(201,168,76,0.15);color:var(--gold);font-size:10px;padding:2px 7px;border-radius:2px;">-22%</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="background:rgba(201,168,76,0.06);border:1px solid #2a2a2a;border-radius:4px;padding:16px;text-align:center;margin-top:8px;">
+      <p style="font-size:12px;color:var(--text-muted);">Produits disponibles en salon · Demandez à Julie, Pauline ou Manon 💈</p>
+    </div>
+  </div>
+</div>
+<div id="page-quiz" class="page">
+  <div class="app-header">
+    <span class="header-logo">Chez Romu</span>
+    <button class="header-back" onclick="goTo('home')">← Retour</button>
+  </div>
+  <div class="booking-container">
+    <p class="section-sub">Trouve ton style</p>
+    <h2 class="section-title">Quiz<br><em>Style</em></h2>
+    <div class="quiz-progress" id="quiz-progress"></div>
+    <div id="quiz-content"></div>
+  </div>
+</div>
+
+<!-- PAGE AVIS -->
+<div id="page-avis" class="page">
+  <div class="app-header">
+    <span class="header-logo">Chez Romu</span>
+    <button class="header-back" onclick="goTo('home')">← Retour</button>
+  </div>
+  <div class="booking-container">
+    <p class="section-sub">Vos retours</p>
+    <h2 class="section-title">Avis<br>Clients</h2>
+
+    <!-- Formulaire avis -->
+    <div style="background:var(--dark2);border:1px solid #2a2a2a;border-radius:4px;padding:20px;margin-bottom:28px;">
+      <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;">Laisser un avis</p>
+      <div class="form-field">
+        <label class="form-label">Votre prénom</label>
+        <input class="form-input" id="avis-nom" type="text" placeholder="Ex: Marie">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Votre note</label>
+        <div style="display:flex;gap:8px;margin-top:4px;" id="stars-container">
+          <span class="star" data-v="1" onclick="setStars(1)" style="font-size:28px;cursor:pointer;opacity:0.3;">★</span>
+          <span class="star" data-v="2" onclick="setStars(2)" style="font-size:28px;cursor:pointer;opacity:0.3;">★</span>
+          <span class="star" data-v="3" onclick="setStars(3)" style="font-size:28px;cursor:pointer;opacity:0.3;">★</span>
+          <span class="star" data-v="4" onclick="setStars(4)" style="font-size:28px;cursor:pointer;opacity:0.3;">★</span>
+          <span class="star" data-v="5" onclick="setStars(5)" style="font-size:28px;cursor:pointer;opacity:0.3;">★</span>
+        </div>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Votre commentaire</label>
+        <textarea class="form-input" id="avis-texte" rows="3" placeholder="Partagez votre expérience..." style="resize:none;"></textarea>
+      </div>
+      <button class="btn-next" style="width:100%;margin-top:4px;" onclick="submitAvis()">Publier mon avis →</button>
+    </div>
+
+    <!-- Liste avis -->
+    <p class="category-label">Avis récents</p>
+    <div id="avis-list"></div>
+  </div>
+</div>
+
+<!-- PAGE CONTACT -->
+<div id="page-contact" class="page">
+  <div class="app-header">
+    <span class="header-logo">Chez Romu</span>
+    <button class="header-back" onclick="goTo('home')">← Retour</button>
+  </div>
+  <div class="booking-container">
+    <p class="section-sub">Nous écrire</p>
+    <h2 class="section-title">Contact</h2>
+
+    <!-- Infos salon -->
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:28px;">
+      <div style="background:var(--dark2);border:1px solid #2a2a2a;border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:14px;">
+        <div style="font-size:24px;">📍</div>
+        <div>
+          <div style="font-size:13px;color:var(--white);font-weight:500;">Adresse</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Avenue du Rigolo · 13190 Lyon</div>
+        </div>
+      </div>
+      <a href="tel:+33600000000" style="text-decoration:none;">
+        <div style="background:var(--dark2);border:1px solid #2a2a2a;border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:14px;">
+          <div style="font-size:24px;">📞</div>
+          <div>
+            <div style="font-size:13px;color:var(--white);font-weight:500;">Téléphone</div>
+            <div style="font-size:12px;color:var(--gold);margin-top:2px;">06 00 00 00 00</div>
+          </div>
+          <div style="margin-left:auto;font-size:12px;color:var(--gold);">Appeler →</div>
+        </div>
+      </a>
+      <div style="background:var(--dark2);border:1px solid #2a2a2a;border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:14px;">
+        <div style="font-size:24px;">🕐</div>
+        <div>
+          <div style="font-size:13px;color:var(--white);font-weight:500;">Horaires</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Mardi – Samedi · 9h – 19h</div>
+          <div style="font-size:11px;color:var(--text-muted);">Fermé Dimanche & Lundi</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulaire message -->
+    <div style="background:var(--dark2);border:1px solid #2a2a2a;border-radius:16px;padding:22px;margin-bottom:20px;">
+      <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:18px;">Envoyer un message</p>
+      <div class="form-field">
+        <label class="form-label">Votre nom</label>
+        <input class="form-input" id="contact-nom" type="text" placeholder="Ex: Marie Dupont">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Votre email</label>
+        <input class="form-input" id="contact-email" type="email" placeholder="Ex: marie@email.com">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Votre message</label>
+        <textarea class="form-input" id="contact-message" rows="4" placeholder="Votre question ou message..." style="resize:none;"></textarea>
+      </div>
+      <button class="btn-next" style="width:100%;margin-top:4px;" onclick="envoyerContact()">Envoyer le message →</button>
+    </div>
+
+    <!-- Google Maps -->
+    <div style="border-radius:16px;overflow:hidden;margin-bottom:20px;">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2784.0!2d4.83!3d45.74!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDXCsDQ0JzI0LjAiTiA0wrA0OSc0OC4wIkU!5e0!3m2!1sfr!2sfr!4v1234567890"
+        width="100%" height="200" style="border:0;display:block;" allowfullscreen loading="lazy">
+      </iframe>
+    </div>
+
+  </div>
+</div>
+
+<!-- PAGE FIDELITE -->
+<div id="page-fidelite" class="page">
+  <div class="app-header">
+    <span class="header-logo">Chez Romu</span>
+    <button class="header-back" onclick="goTo('home')">← Retour</button>
+  </div>
+  <div class="booking-container">
+    <p class="section-sub">Programme fidélité</p>
+    <h2 class="section-title">Carte<br><em>Fidélité</em></h2>
+
+    <div style="background:linear-gradient(135deg,rgba(201,168,76,0.12),rgba(201,168,76,0.04));border:1px solid var(--gold-dark);border-radius:12px;padding:16px 20px;margin-bottom:24px;">
+      <p style="font-size:13px;color:var(--gold);font-weight:600;">🎁 10ème coupe offerte !</p>
+      <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">Cumulez vos passages et profitez de récompenses</p>
+    </div>
+
+    <!-- Choix -->
+    <div id="fid-choix">
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px;">
+        <div onclick="showFidCreer()" style="background:linear-gradient(135deg,var(--gold-dark),#5a3e10);border-radius:16px;padding:22px;cursor:pointer;">
+          <div style="font-size:28px;margin-bottom:8px;">✨</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:#fff;">Créer ma carte</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:4px;">Première fois ? Créez votre carte fidélité</div>
+        </div>
+        <div onclick="showFidLogin()" style="background:var(--dark2);border:1px solid #2a2a2a;border-radius:16px;padding:22px;cursor:pointer;">
+          <div style="font-size:28px;margin-bottom:8px;">🎁</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--white);">Voir ma carte</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">J'ai déjà une carte fidélité</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulaire création -->
+    <div id="fid-creer" style="display:none;">
+      <button onclick="showFidChoix()" style="background:none;border:none;color:var(--gold);font-size:13px;cursor:pointer;margin-bottom:20px;">← Retour</button>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:20px;">Créez votre carte fidélité en quelques secondes</p>
+      <div class="form-field">
+        <label class="form-label">Prénom</label>
+        <input class="form-input" id="fid-creer-prenom" type="text" placeholder="Ex: Marie">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Nom</label>
+        <input class="form-input" id="fid-creer-nom" type="text" placeholder="Ex: Dupont">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Téléphone</label>
+        <input class="form-input" id="fid-creer-tel" type="tel" placeholder="06 xx xx xx xx">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Choisissez un code secret (4 chiffres)</label>
+        <input class="form-input" id="fid-creer-pwd" type="password" placeholder="Ex: 1234" maxlength="4">
+      </div>
+      <button class="btn-next" style="width:100%;margin-top:8px;" onclick="creerCarte()">Créer ma carte →</button>
+    </div>
+
+    <!-- Formulaire connexion -->
+    <div id="fid-login" style="display:none;">
+      <button onclick="showFidChoix()" style="background:none;border:none;color:var(--gold);font-size:13px;cursor:pointer;margin-bottom:20px;">← Retour</button>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:20px;">Connectez-vous pour voir votre progression</p>
+      <div class="form-field">
+        <label class="form-label">Nom</label>
+        <input class="form-input" id="fid-login-nom" type="text" placeholder="Ex: Dupont">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Code secret</label>
+        <input class="form-input" id="fid-login-pwd" type="password" placeholder="Votre code à 4 chiffres" maxlength="4">
+      </div>
+      <button class="btn-next" style="width:100%;margin-top:8px;" onclick="loginCarte()">Voir ma carte →</button>
+    </div>
+
+    <!-- Résultat -->
+    <div id="fid-result" style="display:none;"></div>
+  </div>
+</div>
+
+<!-- PAGE ESSAYAGE VIRTUEL -->
+<div id="page-essayage" class="page">
+  <div class="app-header">
+    <span class="header-logo">Chez Romu</span>
+    <button class="header-back" onclick="goTo('home')">← Retour</button>
+  </div>
+  <div class="booking-container">
+    <p class="section-sub">Visualise ton style</p>
+    <h2 class="section-title">Essayage<br><em>Virtuel</em></h2>
+
+    <!-- Type de visage -->
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;letter-spacing:1px;">1. Mon type de visage</p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px;" id="visage-grid">
+      <div onclick="selectVisage('oval','Ovale')" class="visage-card" style="background:var(--dark2);border:2px solid #2a2a2a;border-radius:16px;padding:16px 8px;cursor:pointer;text-align:center;">
+        <div style="font-size:32px;margin-bottom:6px;">🥚</div>
+        <div style="font-size:11px;color:var(--text-muted);">Ovale</div>
+      </div>
+      <div onclick="selectVisage('rond','Rond')" class="visage-card" style="background:var(--dark2);border:2px solid #2a2a2a;border-radius:16px;padding:16px 8px;cursor:pointer;text-align:center;">
+        <div style="font-size:32px;margin-bottom:6px;">🌕</div>
+        <div style="font-size:11px;color:var(--text-muted);">Rond</div>
+      </div>
+      <div onclick="selectVisage('carre','Carré')" class="visage-card" style="background:var(--dark2);border:2px solid #2a2a2a;border-radius:16px;padding:16px 8px;cursor:pointer;text-align:center;">
+        <div style="font-size:32px;margin-bottom:6px;">⬛</div>
+        <div style="font-size:11px;color:var(--text-muted);">Carré</div>
+      </div>
+      <div onclick="selectVisage('long','Long')" class="visage-card" style="background:var(--dark2);border:2px solid #2a2a2a;border-radius:16px;padding:16px 8px;cursor:pointer;text-align:center;">
+        <div style="font-size:32px;margin-bottom:6px;">🧱</div>
+        <div style="font-size:11px;color:var(--text-muted);">Long</div>
+      </div>
+      <div onclick="selectVisage('coeur','Coeur')" class="visage-card" style="background:var(--dark2);border:2px solid #2a2a2a;border-radius:16px;padding:16px 8px;cursor:pointer;text-align:center;">
+        <div style="font-size:32px;margin-bottom:6px;">🫀</div>
+        <div style="font-size:11px;color:var(--text-muted);">Coeur</div>
+      </div>
+      <div onclick="selectVisage('triangle','Triangle')" class="visage-card" style="background:var(--dark2);border:2px solid #2a2a2a;border-radius:16px;padding:16px 8px;cursor:pointer;text-align:center;">
+        <div style="font-size:32px;margin-bottom:6px;">🔺</div>
+        <div style="font-size:11px;color:var(--text-muted);">Triangle</div>
+      </div>
+    </div>
+
+    <!-- Résultat essayage -->
+    <div id="essayage-result" style="display:none;"></div>
+  </div>
+</div>
+
+<!-- PAGE ROUE DES PROMOS -->
+<div id="page-roue" class="page">
+  <div class="app-header">
+    <span class="header-logo">Chez Romu</span>
+    <button class="header-back" onclick="goTo('home')">← Retour</button>
+  </div>
+  <div class="booking-container">
+    <p class="section-sub">Tente ta chance</p>
+    <h2 class="section-title">Roue des<br><em>Promos</em></h2>
+
+    <div style="background:linear-gradient(135deg,rgba(156,39,176,0.1),rgba(10,10,10,0.9));border:1px solid #9c27b0;border-radius:16px;padding:16px 20px;margin-bottom:24px;">
+      <p style="font-size:12px;color:#ce93d8;">1 tour gratuit par mois par carte fidélité</p>
+    </div>
+
+    <!-- Roue -->
+    <div style="text-align:center;margin-bottom:28px;">
+      <div style="position:relative;display:inline-block;">
+        <!-- Flèche -->
+        <div style="position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:28px;z-index:10;">▼</div>
+        <canvas id="roue-canvas" width="280" height="280" style="border-radius:50%;cursor:pointer;"></canvas>
+      </div>
+    </div>
+
+    <!-- Login fidélité pour jouer -->
+    <div id="roue-login" style="background:var(--dark2);border:1px solid #2a2a2a;border-radius:16px;padding:20px;margin-bottom:16px;">
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">Connectez-vous avec votre carte fidélité pour jouer</p>
+      <div class="form-field">
+        <label class="form-label">Nom</label>
+        <input class="form-input" id="roue-nom" type="text" placeholder="Ex: Dupont">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Code fidélité</label>
+        <input class="form-input" id="roue-pwd" type="password" placeholder="Votre code" maxlength="4">
+      </div>
+      <button class="btn-next" style="width:100%;" onclick="jouerRoue()">Tourner la roue !</button>
+    </div>
+
+    <div id="roue-result" style="display:none;"></div>
+  </div>
+</div>
+
+<!-- PAGE TARIFS -->
+<div id="page-tarifs" class="page">
+  <div class="app-header">
+    <span class="header-logo">Chez Romu</span>
+    <button class="header-back" onclick="goTo('home')">← Retour</button>
+  </div>
+  <div class="booking-container">
+    <p class="section-sub">Nos prestations</p>
+    <h2 class="section-title">Tarifs</h2>
+    <div id="tarifs-content"><p style="color:var(--text-muted);font-size:12px;">Chargement...</p></div>
+  </div>
+</div>
+
+<!-- PAGE BOOKING -->
+<div id="page-booking" class="page">
+  <div class="app-header">
+    <span class="header-logo">Chez Romu</span>
+    <button class="header-back" onclick="goTo('home')">← Retour</button>
+  </div>
+  <div class="booking-container">
+    <p class="section-sub">Réservation en ligne</p>
+    <h2 class="section-title">Prendre un<br>rendez-vous</h2>
+
+    <div class="steps-bar">
+      <div class="step-dot active" id="sdot-1"></div>
+      <div class="step-dot" id="sdot-2"></div>
+      <div class="step-dot" id="sdot-3"></div>
+      <div class="step-dot" id="sdot-4"></div>
+      <div class="step-dot" id="sdot-5"></div>
+    </div>
+
+    <!-- Step 1: Service -->
+    <div class="step-panel active" id="step-1">
+      <p class="category-label">Coupes</p>
+      <div class="card-grid" id="services-container"></div>
+      <div class="nav-bottom">
+        <button class="btn-next" id="btn-next-1" onclick="nextStep(2)" disabled>Continuer →</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Coiffeuse -->
+    <div class="step-panel" id="step-2">
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:20px;">Choisissez votre coiffeuse</p>
+      <div style="display:flex;flex-direction:column;gap:10px;" id="coiffeuses-container"></div>
+      <div class="nav-bottom">
+        <button class="btn-prev" onclick="prevStep(1)">←</button>
+        <button class="btn-next" id="btn-next-2" onclick="nextStep(3)" disabled>Continuer →</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Date -->
+    <div class="step-panel" id="step-3">
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px;">Choisissez une date</p>
+      <div class="date-row" id="dates-container"></div>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px;">Choisissez un créneau</p>
+      <div class="time-grid" id="times-container"></div>
+      <div class="nav-bottom">
+        <button class="btn-prev" onclick="prevStep(2)">←</button>
+        <button class="btn-next" id="btn-next-3" onclick="nextStep(4)" disabled>Continuer →</button>
+      </div>
+    </div>
+
+    <!-- Step 4: Infos -->
+    <div class="step-panel" id="step-4">
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:20px;">Vos coordonnées</p>
+      <div class="form-field">
+        <label class="form-label">Prénom & Nom</label>
+        <input class="form-input" id="input-name" type="text" placeholder="Ex: Marie Dupont" oninput="checkForm4()">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Téléphone</label>
+        <input class="form-input" id="input-phone" type="tel" placeholder="06 xx xx xx xx" oninput="checkForm4()">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Email <span style="color:var(--text-muted);font-size:10px;">(pour recevoir la confirmation)</span></label>
+        <input class="form-input" id="input-email" type="email" placeholder="Ex: marie@email.com">
+      </div>
+      <div class="nav-bottom">
+        <button class="btn-prev" onclick="prevStep(3)">←</button>
+        <button class="btn-next" id="btn-next-4" onclick="nextStep(5)" disabled>Confirmer →</button>
+      </div>
+    </div>
+
+    <!-- Step 5: Confirmation -->
+    <div class="step-panel" id="step-5">
+      <div class="confirm-box">
+        <div class="confirm-icon">✓</div>
+        <h2 class="confirm-title">Réservé !</h2>
+        <p class="confirm-sub">Votre rendez-vous est confirmé</p>
+        <div class="confirm-card" id="confirm-summary"></div>
+        <button class="btn-primary" style="width:100%;" onclick="goTo('home')">Retour à l'accueil</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE PRO LOGIN -->
+<div id="page-pro-login" class="page">
+  <div class="app-header">
+    <span class="header-logo">Chez Romu</span>
+    <button class="header-back" onclick="goTo('home')">← Retour</button>
+  </div>
+  <div class="booking-container">
+    <div class="pro-login">
+      <div class="pro-lock">🔐</div>
+      <p class="section-sub">Accès réservé</p>
+      <h2 class="section-title" style="text-align:center;">Espace Pro</h2>
+      <div class="form-field" style="width:100%;max-width:320px;">
+        <label class="form-label">Mot de passe</label>
+        <input class="form-input" id="pro-pwd" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkPwd()">
+      </div>
+      <button class="btn-primary" style="width:100%;max-width:320px;" onclick="checkPwd()">Entrer</button>
+      <p style="font-size:11px;color:var(--text-muted);">Mot de passe : <em>salon2026</em></p>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE PRO DASHBOARD -->
+<div id="page-pro" class="page">
+  <div class="app-header">
+    <span class="header-logo">Chez Romu · Pro</span>
+    <button class="header-back" onclick="goTo('home')">Déconnexion</button>
+  </div>
+  <div class="pro-container">
+    <div class="pro-tabs">
+      <button class="pro-tab active" onclick="proTab('rdv')">RDV</button>
+      <button class="pro-tab" onclick="proTab('planning')">Planning</button>
+      <button class="pro-tab" onclick="proTab('jour')">Jour</button>
+      <button class="pro-tab" onclick="proTab('fiches')">Fiches</button>
+      <button class="pro-tab" onclick="proTab('tarifs-pro')">Tarifs</button>
+      <button class="pro-tab" onclick="proTab('bloque')">Conges</button>
+      <button class="pro-tab" onclick="proTab('stats')">Stats</button>
+    </div>
+
+    <!-- RDV Panel -->
+    <div class="pro-panel active" id="pro-rdv">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div class="coif-filter" style="margin-bottom:0;flex:1;">
+          <button class="filter-chip active" onclick="filterRdv('all', this)">Toutes</button>
+          <button class="filter-chip" onclick="filterRdv('Julie', this)">Julie</button>
+          <button class="filter-chip" onclick="filterRdv('Pauline', this)">Pauline</button>
+          <button class="filter-chip" onclick="filterRdv('Manon', this)">Manon</button>
+        </div>
+        <button onclick="refreshRdvs()" style="background:none;border:1px solid #333;color:var(--text-muted);font-size:16px;padding:6px 10px;border-radius:3px;cursor:pointer;flex-shrink:0;margin-left:8px;" title="Actualiser">↻</button>
+      </div>
+      <div id="rdv-list"></div>
+    </div>
+
+    <!-- Planning Panel -->
+    <div class="pro-panel" id="pro-planning">
+      <!-- Vue sélection coiffeuse -->
+      <div id="planning-select">
+        <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:16px;">Choisir une coiffeuse</p>
+        <div id="planning-coif-cards"></div>
+      </div>
+      <!-- Vue planning détaillé -->
+      <div id="planning-detail" style="display:none;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+          <button onclick="backToPlanning()" style="background:none;border:none;color:var(--gold);font-size:13px;cursor:pointer;letter-spacing:1px;">← Retour</button>
+          <div id="planning-coif-title" style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--white);flex:1;text-align:center;"></div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <button onclick="planningPrev()" style="background:none;border:1px solid #333;color:var(--gold);font-size:20px;padding:6px 14px;border-radius:4px;cursor:pointer;">‹</button>
+          <div id="planning-label" style="font-size:12px;color:var(--text-muted);text-align:center;"></div>
+          <button onclick="planningNext()" style="background:none;border:1px solid #333;color:var(--gold);font-size:20px;padding:6px 14px;border-radius:4px;cursor:pointer;">›</button>
+        </div>
+        <div id="planning-grid"></div>
+      </div>
+    </div>
+
+    <!-- Vue Jour Panel -->
+    <div class="pro-panel" id="pro-jour">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <button onclick="jourPrev()" style="background:none;border:1px solid #333;color:var(--gold);font-size:22px;padding:6px 14px;border-radius:3px;cursor:pointer;">‹</button>
+        <div id="jour-label" style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--white);text-align:center;"></div>
+        <button onclick="jourNext()" style="background:none;border:1px solid #333;color:var(--gold);font-size:22px;padding:6px 14px;border-radius:3px;cursor:pointer;">›</button>
+      </div>
+      <div id="jour-content"></div>
+    </div>
+
+    <!-- Fiches Clients Panel -->
+    <div class="pro-panel" id="pro-fiches">
+      <div style="display:flex;gap:8px;margin-bottom:16px;">
+        <input class="form-input" id="fiche-search" type="text" placeholder="🔍 Rechercher..." oninput="searchFiches()" style="flex:1;">
+        <button onclick="showAddClient()" style="background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--black);border:none;padding:0 16px;border-radius:4px;font-size:18px;cursor:pointer;flex-shrink:0;">+</button>
+      </div>
+      <div id="fiches-list"></div>
+      <div id="fiche-detail" style="display:none;"></div>
+      <!-- Formulaire ajout client -->
+      <div id="fiche-add" style="display:none;">
+        <button onclick="renderFiches()" style="background:none;border:none;color:var(--gold);font-size:13px;letter-spacing:1px;cursor:pointer;margin-bottom:20px;">← Annuler</button>
+        <p class="section-sub">Nouveau client</p>
+        <h3 style="font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--white);margin-bottom:20px;">Ajouter un client</h3>
+        <div class="form-field">
+          <label class="form-label">Prénom</label>
+          <input class="form-input" id="nc-prenom" type="text" placeholder="Ex: Marie">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Nom</label>
+          <input class="form-input" id="nc-nom" type="text" placeholder="Ex: Dupont">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Téléphone</label>
+          <input class="form-input" id="nc-tel" type="tel" placeholder="06 xx xx xx xx">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Adresse</label>
+          <input class="form-input" id="nc-adresse" type="text" placeholder="Ex: 12 rue de la Paix, Paris">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Genre</label>
+          <select class="form-input" id="nc-genre" style="cursor:pointer;">
+            <option value="Femme">Femme</option>
+            <option value="Homme">Homme</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label class="form-label">Coiffeuse habituelle</label>
+          <select class="form-input" id="nc-coiffeuse" style="cursor:pointer;">
+            <option value="">Pas de préférence</option>
+            <option value="Julie">Julie</option>
+            <option value="Pauline">Pauline</option>
+            <option value="Manon">Manon</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label class="form-label">Préférences / Notes</label>
+          <textarea class="form-input" id="nc-prefs" rows="3" placeholder="Ex: Allergie colorant, préfère les coupes courtes..." style="resize:none;"></textarea>
+        </div>
+        <button class="btn-next" style="width:100%;margin-top:8px;" onclick="saveNewClient()">Enregistrer le client →</button>
+      </div>
+    </div>
+
+    <!-- Tarifs Pro Panel -->
+    <div class="pro-panel" id="pro-tarifs-pro">
+      <button class="btn-primary" style="width:100%;margin-bottom:20px;" onclick="showAddTarif()">+ Ajouter un tarif</button>
+
+      <!-- Formulaire ajout -->
+      <div id="tarif-add-form" style="display:none;background:var(--dark2);border:1px solid #2a2a2a;border-radius:12px;padding:20px;margin-bottom:20px;">
+        <p style="font-size:11px;letter-spacing:2px;color:var(--gold);margin-bottom:16px;text-transform:uppercase;">Nouveau tarif</p>
+        <div class="form-field">
+          <label class="form-label">Categorie</label>
+          <select class="form-input" id="tarif-cat" style="cursor:pointer;">
+            <option>Coupes</option>
+            <option>Barbe</option>
+            <option>Couleur</option>
+            <option>Soins</option>
+            <option>Forfaits</option>
+            <option>Autre</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label class="form-label">Nom du service</label>
+          <input class="form-input" id="tarif-nom" type="text" placeholder="Ex: Coupe + Soin">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Description</label>
+          <input class="form-input" id="tarif-desc" type="text" placeholder="Ex: Coupe avec soin nutritif inclus">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Prix (€)</label>
+          <input class="form-input" id="tarif-prix" type="number" placeholder="Ex: 45">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Duree</label>
+          <input class="form-input" id="tarif-duree" type="text" placeholder="Ex: 45 min">
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn-next" style="flex:1;" onclick="saveTarif()">Ajouter →</button>
+          <button class="btn-prev" onclick="hideAddTarif()">✕</button>
+        </div>
+      </div>
+
+      <div id="tarifs-pro-list"></div>
+    </div>
+
+    <!-- Créneaux bloqués Panel -->
+    <div class="pro-panel" id="pro-bloque">
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:20px;">Bloquer une journée ou un créneau (congé, pause, fermeture)</p>
+      <div style="background:var(--dark2);border:1px solid #2a2a2a;border-radius:4px;padding:20px;margin-bottom:20px;">
+        <div class="form-field">
+          <label class="form-label">Coiffeuse</label>
+          <select class="form-input" id="bloque-coif" style="cursor:pointer;">
+            <option value="Toutes">Toutes (fermeture salon)</option>
+            <option value="Julie">Julie</option>
+            <option value="Pauline">Pauline</option>
+            <option value="Manon">Manon</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label class="form-label">Date</label>
+          <input class="form-input" id="bloque-date" type="date">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Raison</label>
+          <input class="form-input" id="bloque-raison" type="text" placeholder="Ex: Congés, Maladie, Fermeture...">
+        </div>
+        <button class="btn-next" style="width:100%;margin-top:4px;" onclick="addBloque()">Bloquer ce créneau →</button>
+      </div>
+      <p class="category-label">Jours bloqués</p>
+      <div id="bloque-list"></div>
+    </div>
+
+    <!-- Stats Panel -->
+    <div class="pro-panel" id="pro-stats">
+      <div class="stats-grid" id="stats-grid"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== DATA =====
+const SERVICES = [
+  { cat: 'Coupes', items: [
+    { id:'s1', nom:'Coupe homme', prix:20, duree:'30 min' },
+    { id:'s2', nom:'Coupe femme', prix:35, duree:'45 min' },
+    { id:'s3', nom:'Coupe enfant', prix:15, duree:'20 min' },
+    { id:'s4', nom:'Dégradé', prix:25, duree:'30 min' },
+    { id:'s5', nom:'Coupe + Dégradé', prix:35, duree:'45 min' },
+  ]},
+  { cat: 'Barbe', items: [
+    { id:'s6', nom:'Barbe', prix:15, duree:'20 min' },
+    { id:'s7', nom:'Coupe + Barbe', prix:30, duree:'45 min' },
+    { id:'s8', nom:'Taille barbe', prix:10, duree:'15 min' },
+  ]},
+  { cat: 'Couleur', items: [
+    { id:'s9', nom:'Coloration', prix:65, duree:'60 min' },
+    { id:'s10', nom:'Mèches', prix:80, duree:'75 min' },
+    { id:'s11', nom:'Balayage', prix:90, duree:'90 min' },
+  ]},
+  { cat: 'Soin', items: [
+    { id:'s12', nom:'Brushing', prix:25, duree:'30 min' },
+    { id:'s13', nom:'Lissage', prix:70, duree:'60 min' },
+    { id:'s14', nom:'Soin cheveux', prix:30, duree:'30 min' },
+  ]},
+];
+
+const COIFFEUSES = [
+  { id:'c1', nom:'Julie', tag:'Spécialiste couleur' },
+  { id:'c2', nom:'Pauline', tag:'Coupes & Dégradés' },
+  { id:'c3', nom:'Manon', tag:'Soins & Brushing' },
+];
+
+const HORAIRES = ['09:00','09:30','10:00','10:30','11:00','11:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30'];
+
+// ===== STATE =====
+let booking = { service:null, coiffeuse:null, date:null, time:null, nom:'', tel:'' };
+let currentStep = 1;
+let proFilter = 'all';
+let rdvsCache = null; // Cache RDV pour éviter appels répétés
+
+// ===== GOOGLE SHEETS API =====
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyhPxp96dVwvE3f78fw3W-fFtV4ZwRcfz05lioHqvx7TFPcvvVLcQDYKiDST41F2byk/exec';
+
+async function apiCall(params) {
+  const url = SCRIPT_URL + '?' + new URLSearchParams(params).toString();
+  const res = await fetch(url);
+  return await res.json();
+}
+
+async function getRdvs(forceRefresh = false) {
+  if (rdvsCache !== null && !forceRefresh) return rdvsCache;
+  try {
+    const data = await apiCall({ action: 'get' });
+    const raw = Array.isArray(data) ? data.filter(r => r.id) : [];
+    // Normaliser toutes les dates et heures au bon format
+    rdvsCache = raw.map(r => {
+      let date = String(r.date || '');
+      let time = String(r.time || '');
+      // Corriger date ISO bizarre ex: "1899-12-30T..." ou "2026-04-07T..."
+      if (date.includes('T')) {
+        const d = new Date(date);
+        date = `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}-${String(d.getUTCDate()).padStart(2,'0')}`;
+      }
+      // Corriger heure ISO bizarre
+      if (time.includes('T')) {
+        const t = new Date(time);
+        time = `${String(t.getUTCHours()).padStart(2,'0')}:${String(t.getUTCMinutes()).padStart(2,'0')}`;
+      }
+      return { ...r, date, time };
+    }).filter(r => r.date && r.date.match(/^\d{4}-\d{2}-\d{2}$/) && r.nom);
+    return rdvsCache;
+  } catch(e) { return []; }
+}
+
+async function addRdv(rdv) {
+  return await apiCall({ action: 'add', ...rdv });
+}
+
+async function deleteRdvApi(id) {
+  return await apiCall({ action: 'delete', id: String(id) });
+}
+
+// ===== NAVIGATION =====
+function goTo(p) {
+  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+  if (p === 'booking') {
+    document.getElementById('page-booking').classList.add('active');
+    resetBooking();
+  } else if (p === 'tarifs') {
+    document.getElementById('page-tarifs').classList.add('active');
+    renderTarifsClient();
+  } else if (p === 'essayage') {
+    document.getElementById('page-essayage').classList.add('active');
+    document.getElementById('essayage-result').style.display = 'none';
+    document.querySelectorAll('.visage-card').forEach(c => c.style.borderColor = '#2a2a2a');
+  } else if (p === 'roue') {
+    document.getElementById('page-roue').classList.add('active');
+    setTimeout(() => initRoue(), 100);
+  } else if (p === 'contact') {
+    document.getElementById('page-contact').classList.add('active');
+  } else if (p === 'fidelite') {
+    document.getElementById('page-fidelite').classList.add('active');
+    showFidChoix();
+  } else if (p === 'quiz') {
+    document.getElementById('page-quiz').classList.add('active');
+    startQuiz();
+  } else if (p === 'boutique') {
+    document.getElementById('page-boutique').classList.add('active');
+  } else if (p === 'avis') {
+    document.getElementById('page-avis').classList.add('active');
+    renderAvis();
+  } else if (p === 'pro-login') {
+    document.getElementById('page-pro-login').classList.add('active');
+  } else if (p === 'pro') {
+    document.getElementById('page-pro').classList.add('active');
+    rdvsCache = null; // reset cache à chaque connexion
+    renderRdvList();
+    renderStats();
+  } else {
+    document.getElementById('page-home').classList.add('active');
+  }
+}
+
+// ===== BOOKING =====
+function resetBooking() {
+  booking = { service:null, coiffeuse:null, date:null, time:null, nom:'', tel:'' };
+  currentStep = 1;
+  renderServices();
+  renderCoiffeuses();
+  renderDates();
+  showStep(1);
+}
+
+function showStep(n) {
+  currentStep = n;
+  document.querySelectorAll('.step-panel').forEach(el => el.classList.remove('active'));
+  document.getElementById('step-' + n).classList.add('active');
+  for (let i = 1; i <= 5; i++) {
+    const dot = document.getElementById('sdot-' + i);
+    if (i < n) { dot.className = 'step-dot done'; }
+    else if (i === n) { dot.className = 'step-dot active'; }
+    else { dot.className = 'step-dot'; }
+  }
+  if (n === 3) renderTimes();
+  if (n === 5) renderConfirmation();
+}
+
+function nextStep(n) { showStep(n); }
+function prevStep(n) { showStep(n); }
+
+function renderServices() {
+  const c = document.getElementById('services-container');
+  c.innerHTML = '';
+  SERVICES.forEach(cat => {
+    const label = document.createElement('p');
+    label.className = 'category-label';
+    label.style.gridColumn = '1/-1';
+    label.textContent = cat.cat;
+    c.appendChild(label);
+    cat.items.forEach(s => {
+      const div = document.createElement('div');
+      div.className = 'select-card';
+      div.innerHTML = `<div class="card-name">${s.nom}</div><div class="card-price">${s.prix} €</div><div class="card-duration">${s.duree}</div>`;
+      div.onclick = () => {
+        booking.service = s;
+        document.querySelectorAll('#services-container .select-card').forEach(el => el.classList.remove('selected'));
+        div.classList.add('selected');
+        document.getElementById('btn-next-1').disabled = false;
+      };
+      if (booking.service && booking.service.id === s.id) { div.classList.add('selected'); }
+      c.appendChild(div);
+    });
+  });
+}
+
+function renderCoiffeuses() {
+  const c = document.getElementById('coiffeuses-container');
+  c.innerHTML = '';
+  COIFFEUSES.forEach(cf => {
+    const div = document.createElement('div');
+    div.className = 'coiffeuse-card';
+    div.innerHTML = `
+      <div class="coiffeuse-avatar">${cf.nom[0]}</div>
+      <div class="coiffeuse-info">
+        <div class="coiffeuse-name">${cf.nom}</div>
+        <div class="coiffeuse-tag">${cf.tag}</div>
+      </div>
+      <div style="color:var(--gold-dark);font-size:18px;">›</div>
+    `;
+    div.onclick = () => {
+      booking.coiffeuse = cf;
+      document.querySelectorAll('.coiffeuse-card').forEach(el => el.classList.remove('selected'));
+      div.classList.add('selected');
+      document.getElementById('btn-next-2').disabled = false;
+    };
+    if (booking.coiffeuse && booking.coiffeuse.id === cf.id) div.classList.add('selected');
+    c.appendChild(div);
+  });
+}
+
+function renderDates() {
+  const c = document.getElementById('dates-container');
+  c.innerHTML = '';
+  const days = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+  const months = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+  const today = new Date();
+  for (let i = 1; i <= 14; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() + i);
+    if (d.getDay() === 0) continue; // closed Sunday
+    const div = document.createElement('div');
+    div.className = 'date-chip';
+    const dateStr = d.toISOString().split('T')[0];
+    div.innerHTML = `<div class="date-day">${days[d.getDay()]}</div><div class="date-num">${d.getDate()}</div><div class="date-day">${months[d.getMonth()]}</div>`;
+    div.onclick = () => {
+      booking.date = dateStr;
+      booking.time = null;
+      document.querySelectorAll('.date-chip').forEach(el => el.classList.remove('selected'));
+      div.classList.add('selected');
+      document.getElementById('btn-next-3').disabled = true;
+      renderTimes();
+    };
+    if (booking.date === dateStr) div.classList.add('selected');
+    c.appendChild(div);
+  }
+}
+
+async function renderTimes() {
+  const c = document.getElementById('times-container');
+  c.innerHTML = '<p style="color:var(--text-muted);font-size:12px;letter-spacing:1px;">Chargement...</p>';
+  const rdvs = await getRdvs();
+  const bloques = getBloqués();
+  c.innerHTML = '';
+
+  // Vérifier si la coiffeuse est en congé ce jour
+  const isBloque = booking.date && booking.coiffeuse && bloques.some(b =>
+    b.date === booking.date && (b.coif === booking.coiffeuse.nom || b.coif === 'Toutes')
+  );
+
+  if (isBloque) {
+    c.innerHTML = `<div style="grid-column:1/-1;background:rgba(192,57,43,0.1);border:1px solid #c0392b;border-radius:4px;padding:14px;color:#e74c3c;font-size:13px;text-align:center;">🚫 ${booking.coiffeuse.nom} est indisponible ce jour</div>`;
+    document.getElementById('btn-next-3').disabled = true;
+    return;
+  }
+
+  HORAIRES.forEach(h => {
+    const taken = booking.date && booking.coiffeuse && rdvs.some(r => r.date === booking.date && r.time === h && r.coiffeuse === booking.coiffeuse.nom);
+    const div = document.createElement('div');
+    div.className = 'time-slot' + (taken ? ' taken' : '');
+    div.textContent = h;
+    if (!taken) {
+      div.onclick = () => {
+        booking.time = h;
+        document.querySelectorAll('.time-slot:not(.taken)').forEach(el => el.classList.remove('selected'));
+        div.classList.add('selected');
+        document.getElementById('btn-next-3').disabled = !(booking.date && booking.time);
+      };
+    }
+    if (booking.time === h) div.classList.add('selected');
+    c.appendChild(div);
+  });
+}
+
+function checkForm4() {
+  const n = document.getElementById('input-name').value.trim();
+  const p = document.getElementById('input-phone').value.trim();
+  document.getElementById('btn-next-4').disabled = !(n && p);
+  booking.nom = n;
+  booking.tel = p;
+}
+
+async function renderConfirmation() {
+  const email = document.getElementById('input-email').value.trim();
+  const newRdv = {
+    id: Date.now(),
+    service: booking.service.nom,
+    prix: booking.service.prix,
+    coiffeuse: booking.coiffeuse.nom,
+    date: booking.date,
+    time: booking.time,
+    nom: document.getElementById('input-name').value.trim(),
+    tel: document.getElementById('input-phone').value.trim(),
+    email: email,
+  };
+
+  document.getElementById('confirm-summary').innerHTML = '<p style="color:var(--text-muted);font-size:12px;">Enregistrement en cours...</p>';
+
+  try {
+    await addRdv(newRdv);
+  } catch(e) {
+    showToast('⚠️ Erreur réseau, RDV non sauvegardé');
+  }
+
+  const dateObj = new Date(booking.date + 'T12:00:00');
+  const days = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+  const months = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  const dateLabel = `${days[dateObj.getDay()]} ${dateObj.getDate()} ${months[dateObj.getMonth()]}`;
+
+  document.getElementById('confirm-summary').innerHTML = `
+    <div class="summary-row"><span class="summary-label">Client</span><span class="summary-value">${newRdv.nom}</span></div>
+    <div class="summary-row"><span class="summary-label">Service</span><span class="summary-value">${newRdv.service}</span></div>
+    <div class="summary-row"><span class="summary-label">Coiffeuse</span><span class="summary-value">${newRdv.coiffeuse}</span></div>
+    <div class="summary-row"><span class="summary-label">Date</span><span class="summary-value">${dateLabel}</span></div>
+    <div class="summary-row"><span class="summary-label">Heure</span><span class="summary-value">${newRdv.time}</span></div>
+    <div class="summary-row"><span class="summary-label">Total</span><span class="summary-price">${newRdv.prix} €</span></div>
+    ${email ? `<div class="summary-row"><span class="summary-label">Email</span><span class="summary-value" style="font-size:12px;">✉️ Confirmation envoyée</span></div>` : ''}
+  `;
+}
+
+// ===== PRO =====
+function checkPwd() {
+  const pwd = document.getElementById('pro-pwd').value;
+  if (pwd === 'salon2026') {
+    goTo('pro');
+  } else {
+    showToast('❌ Mot de passe incorrect');
+    document.getElementById('pro-pwd').value = '';
+  }
+}
+
+function proTab(tab) {
+  document.querySelectorAll('.pro-tab').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.pro-panel').forEach(el => el.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('pro-' + tab).classList.add('active');
+  if (tab === 'rdv') renderRdvList();
+  if (tab === 'stats') renderStats();
+  if (tab === 'jour') { jourDate = new Date(); renderJour(); }
+  if (tab === 'bloque') renderBloques();
+  if (tab === 'fiches') { document.getElementById('fiche-search').value = ''; renderFiches(); }
+  if (tab === 'planning') { planningDate = new Date(); renderPlanning(); }
+  if (tab === 'tarifs-pro') { hideAddTarif(); renderTarifsPro(); }
+}
+
+async function refreshRdvs() {
+  showToast('Actualisation...');
+  rdvsCache = null;
+  await renderRdvList();
+  renderStats();
+  showToast('✓ Données à jour');
+}
+
+function filterRdv(filter, el) {
+  proFilter = filter;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderRdvList();
+}
+
+async function renderRdvList() {
+  const c = document.getElementById('rdv-list');
+  c.innerHTML = '<p style="color:var(--text-muted);font-size:12px;letter-spacing:1px;padding:20px 0;">Chargement des RDV...</p>';
+  let rdvs = await getRdvs();
+
+  if (proFilter !== 'all') rdvs = rdvs.filter(r => r.coiffeuse === proFilter);
+  rdvs.sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+
+  if (rdvs.length === 0) {
+    c.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><p class="empty-text">Aucun rendez-vous</p></div>`;
+    return;
+  }
+
+  const days = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+  const months = ['jan','fév','mar','avr','mai','jun','jul','aoû','sep','oct','nov','déc'];
+
+  let html = '';
+  let lastDate = '';
+  rdvs.forEach(r => {
+    if (r.date !== lastDate) {
+      const d = new Date(r.date + 'T12:00:00');
+      const label = `${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]}`;
+      html += `<p style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin:16px 0 8px;">${label}</p>`;
+      lastDate = r.date;
+    }
+    html += `
+      <div class="rdv-card">
+        <div class="rdv-time">${r.time}</div>
+        <div class="rdv-info">
+          <div class="rdv-client">${r.nom}</div>
+          <div class="rdv-detail">${r.service} · ${r.coiffeuse}</div>
+        </div>
+        <div class="rdv-badge">${r.prix}€</div>
+        <button class="btn-delete" onclick="genererFacture(${JSON.stringify(r).replace(/"/g,'&quot;')})" style="color:var(--gold-dark);font-size:14px;margin-right:2px;" title="Facture">🧾</button>
+        <button class="btn-delete" onclick="deleteRdv(${r.id})">✕</button>
+      </div>
+    `;
+  });
+  c.innerHTML = html;
+}
+
+async function deleteRdv(id) {
+  showToast('Suppression...');
+  await deleteRdvApi(id);
+  rdvsCache = null; // invalider le cache
+  renderRdvList();
+  renderStats();
+  showToast('✓ RDV supprimé');
+}
+
+async function renderStats() {
+  const rdvs = await getRdvs();
+  const total = rdvs.length;
+  const ca = rdvs.reduce((s, r) => s + Number(r.prix), 0);
+  const julieCount = rdvs.filter(r => r.coiffeuse === 'Julie').length;
+  const paulineCount = rdvs.filter(r => r.coiffeuse === 'Pauline').length;
+  const manonCount = rdvs.filter(r => r.coiffeuse === 'Manon').length;
+
+  document.getElementById('stats-grid').innerHTML = `
+    <div class="stat-card"><div class="stat-num">${total}</div><div class="stat-label">Total RDV</div></div>
+    <div class="stat-card"><div class="stat-num">${ca}€</div><div class="stat-label">Chiffre d'affaires</div></div>
+    <div class="stat-card"><div class="stat-num">${julieCount}</div><div class="stat-label">Julie</div></div>
+    <div class="stat-card"><div class="stat-num">${paulineCount}</div><div class="stat-label">Pauline</div></div>
+    <div class="stat-card" style="grid-column:1/-1"><div class="stat-num">${manonCount}</div><div class="stat-label">Manon</div></div>
+  `;
+}
+
+// ===== AVIS =====
+let selectedStars = 0;
+
+function setStars(n) {
+  selectedStars = n;
+  document.querySelectorAll('.star').forEach(s => {
+    s.style.opacity = Number(s.dataset.v) <= n ? '1' : '0.3';
+    s.style.color = Number(s.dataset.v) <= n ? 'var(--gold)' : '';
+  });
+}
+
+function getAvis() {
+  try { return JSON.parse(localStorage.getItem('chez_romu_avis') || '[]'); } catch(e) { return []; }
+}
+function saveAvis(a) { localStorage.setItem('chez_romu_avis', JSON.stringify(a)); }
+
+function submitAvis() {
+  const nom = document.getElementById('avis-nom').value.trim();
+  const texte = document.getElementById('avis-texte').value.trim();
+  if (!nom || !texte || selectedStars === 0) { showToast('⚠️ Remplis tous les champs'); return; }
+  const avis = getAvis();
+  avis.unshift({ id: Date.now(), nom, texte, stars: selectedStars, date: new Date().toLocaleDateString('fr-FR') });
+  saveAvis(avis);
+  document.getElementById('avis-nom').value = '';
+  document.getElementById('avis-texte').value = '';
+  setStars(0);
+  selectedStars = 0;
+  renderAvis();
+  showToast('✓ Merci pour votre avis !');
+}
+
+function renderAvis() {
+  const avis = getAvis();
+  const c = document.getElementById('avis-list');
+  if (avis.length === 0) {
+    c.innerHTML = `<div class="empty-state"><div class="empty-icon">💬</div><p class="empty-text">Soyez le premier à laisser un avis</p></div>`;
+    return;
+  }
+  c.innerHTML = avis.map(a => `
+    <div style="background:var(--dark2);border:1px solid #2a2a2a;border-radius:4px;padding:16px;margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--white);">${a.nom}</div>
+        <div style="font-size:12px;color:var(--text-muted);">${a.date}</div>
+      </div>
+      <div style="color:var(--gold);font-size:16px;margin-bottom:8px;">${'★'.repeat(a.stars)}${'☆'.repeat(5-a.stars)}</div>
+      <div style="font-size:13px;color:var(--text-muted);line-height:1.6;">${a.texte}</div>
+    </div>
+  `).join('');
+}
+
+// ===== VUE JOUR =====
+let jourDate = new Date();
+
+function jourDateStr(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function jourPrev() { jourDate.setDate(jourDate.getDate()-1); renderJour(); }
+function jourNext() { jourDate.setDate(jourDate.getDate()+1); renderJour(); }
+
+async function renderJour() {
+  const days = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+  const months = ['jan','fév','mar','avr','mai','jun','jul','aoû','sep','oct','nov','déc'];
+  const dateStr = jourDateStr(jourDate);
+  const isToday = dateStr === jourDateStr(new Date());
+
+  document.getElementById('jour-label').innerHTML = `
+    <div style="font-size:13px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:2px;">${days[jourDate.getDay()]}</div>
+    <div>${jourDate.getDate()} ${months[jourDate.getMonth()]} ${jourDate.getFullYear()}${isToday ? ' <span style="font-size:11px;color:var(--gold);">· Aujourd\'hui</span>' : ''}</div>
+  `;
+
+  const rdvs = await getRdvs();
+  const bloques = getBloqués();
+  const c = document.getElementById('jour-content');
+
+  const isBloque = bloques.find(b => b.date === dateStr && b.coif === 'Toutes');
+  if (isBloque) {
+    c.innerHTML = `<div style="background:rgba(192,57,43,0.1);border:1px solid #c0392b;border-radius:4px;padding:16px;text-align:center;color:#e74c3c;">🚫 Salon fermé — ${isBloque.raison}</div>`;
+    return;
+  }
+
+  let html = '';
+  ['Julie','Pauline','Manon'].forEach(coif => {
+    const bloqueCoif = bloques.find(b => b.date === dateStr && b.coif === coif);
+    const rdvsCoif = rdvs.filter(r => r.date === dateStr && r.coiffeuse === coif).sort((a,b) => a.time.localeCompare(b.time));
+
+    html += `<div style="margin-bottom:20px;">
+      <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #1e1e1e;">${coif}</div>`;
+
+    if (bloqueCoif) {
+      html += `<div style="background:rgba(192,57,43,0.08);border:1px solid #444;border-radius:4px;padding:10px;color:#e74c3c;font-size:12px;">🚫 ${bloqueCoif.raison}</div>`;
+    } else if (rdvsCoif.length === 0) {
+      html += `<p style="color:#333;font-size:12px;padding:8px 0;">Aucun RDV</p>`;
+    } else {
+      html += rdvsCoif.map(r => `
+        <div class="rdv-card" style="margin-bottom:8px;">
+          <div class="rdv-time">${r.time}</div>
+          <div class="rdv-info">
+            <div class="rdv-client">${r.nom}</div>
+            <div class="rdv-detail">${r.service}</div>
+          </div>
+          <div class="rdv-badge">${r.prix}€</div>
+        </div>`).join('');
+    }
+    html += '</div>';
+  });
+
+  c.innerHTML = html || `<div class="empty-state"><div class="empty-icon">📭</div><p class="empty-text">Aucun RDV ce jour</p></div>`;
+}
+
+// ===== CRÉNEAUX BLOQUÉS =====
+function getBloqués() {
+  try { return JSON.parse(localStorage.getItem('chez_romu_bloques') || '[]'); } catch(e) { return []; }
+}
+function saveBloques(b) { localStorage.setItem('chez_romu_bloques', JSON.stringify(b)); }
+
+function addBloque() {
+  const coif = document.getElementById('bloque-coif').value;
+  const date = document.getElementById('bloque-date').value;
+  const raison = document.getElementById('bloque-raison').value.trim();
+  if (!date || !raison) { showToast('⚠️ Remplis la date et la raison'); return; }
+  const bloques = getBloqués();
+  bloques.push({ id: Date.now(), coif, date, raison });
+  saveBloques(bloques);
+  document.getElementById('bloque-date').value = '';
+  document.getElementById('bloque-raison').value = '';
+  renderBloques();
+  showToast('✓ Créneau bloqué');
+}
+
+function renderBloques() {
+  const bloques = getBloqués();
+  const c = document.getElementById('bloque-list');
+  if (bloques.length === 0) {
+    c.innerHTML = `<div class="empty-state"><div class="empty-icon">📅</div><p class="empty-text">Aucun créneau bloqué</p></div>`;
+    return;
+  }
+  bloques.sort((a,b) => a.date.localeCompare(b.date));
+  c.innerHTML = bloques.map(b => {
+    const d = new Date(b.date + 'T12:00:00');
+    const days = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+    const months = ['jan','fév','mar','avr','mai','jun','jul','aoû','sep','oct','nov','déc'];
+    return `<div class="rdv-card" style="border-color:#333;">
+      <div style="font-size:12px;color:var(--text-muted);min-width:70px;text-align:center;line-height:1.4;">${days[d.getDay()]}<br><strong style="color:var(--white);font-size:16px;">${d.getDate()}</strong><br>${months[d.getMonth()]}</div>
+      <div class="rdv-info">
+        <div class="rdv-client">${b.coif}</div>
+        <div class="rdv-detail">🚫 ${b.raison}</div>
+      </div>
+      <button class="btn-delete" onclick="deleteBloque(${b.id})">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function deleteBloque(id) {
+  saveBloques(getBloqués().filter(b => b.id !== id));
+  renderBloques();
+  showToast('✓ Créneau débloqué');
+}
+
+// ===== QUIZ STYLE =====
+const QUIZ_QUESTIONS = [
+  {
+    q: 'Quel est ton style au quotidien ?',
+    options: [
+      { icon:'👔', text:'Classique & élégant', val:'classic' },
+      { icon:'🎨', text:'Créatif & original', val:'bold' },
+      { icon:'🌿', text:'Naturel & décontracté', val:'natural' },
+      { icon:'⚡', text:'Moderne & tendance', val:'modern' },
+    ]
+  },
+  {
+    q: 'Combien de temps passes-tu à te coiffer le matin ?',
+    options: [
+      { icon:'⚡', text:'Moins de 5 min', val:'quick' },
+      { icon:'☕', text:'10-15 min', val:'medium' },
+      { icon:'✨', text:'Plus de 20 min', val:'long' },
+    ]
+  },
+  {
+    q: 'Quelle longueur préfères-tu ?',
+    options: [
+      { icon:'✂️', text:'Court', val:'short' },
+      { icon:'💇', text:'Mi-long', val:'mid' },
+      { icon:'🌊', text:'Long', val:'long' },
+    ]
+  },
+  {
+    q: 'Tu oses quoi ?',
+    options: [
+      { icon:'🎯', text:'Rien de trop fou', val:'safe' },
+      { icon:'🌈', text:'Une touche de couleur', val:'color' },
+      { icon:'🔥', text:'Tout ! Je veux changer', val:'daring' },
+    ]
+  }
+];
+
+const QUIZ_RESULTS = {
+  classic:  { emoji:'💈', title:'Le Classique Raffiné', desc:'Une coupe nette et élégante qui traverse le temps. Nous te recommandons une coupe structurée avec un dégradé précis. Idéal pour toi : Coupe homme ou Brushing soigné.', service:'Coupe homme' },
+  bold:     { emoji:'🎨', title:'L\'Artiste Audacieux', desc:'Tu aimes te démarquer ! Une coloration tendance ou des mèches créatives sont faites pour toi. Idéal : Mèches ou Balayage avec une coupe asymétrique.', service:'Mèches' },
+  natural:  { emoji:'🌿', title:'Le Naturel Chic', desc:'Simple, authentique et beau. Un soin profond et un brushing naturel sublimeront ta texture. Idéal : Soin cheveux + Brushing.', service:'Soin cheveux' },
+  modern:   { emoji:'⚡', title:'Le Trendy Urbain', desc:'Tu suis les tendances sans les subir. Un dégradé moderne ou une coupe texturée te correspondront parfaitement. Idéal : Dégradé ou Coupe + Dégradé.', service:'Dégradé' },
+};
+
+let quizAnswers = [];
+let quizStep = 0;
+
+function startQuiz() {
+  quizAnswers = [];
+  quizStep = 0;
+  renderQuizStep();
+}
+
+function renderQuizStep() {
+  const prog = document.getElementById('quiz-progress');
+  prog.innerHTML = QUIZ_QUESTIONS.map((_, i) =>
+    `<div class="quiz-bar ${i < quizStep ? 'done' : ''}"></div>`
+  ).join('');
+
+  if (quizStep >= QUIZ_QUESTIONS.length) {
+    showQuizResult();
+    return;
+  }
+
+  const q = QUIZ_QUESTIONS[quizStep];
+  document.getElementById('quiz-content').innerHTML = `
+    <p style="font-size:12px;color:var(--text-muted);letter-spacing:1px;margin-bottom:8px;">Question ${quizStep+1}/${QUIZ_QUESTIONS.length}</p>
+    <h3 style="font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--white);margin-bottom:24px;line-height:1.3;">${q.q}</h3>
+    ${q.options.map((o,i) => `
+      <div class="quiz-option" onclick="quizAnswer('${o.val}', ${i})">
+        <div class="quiz-icon">${o.icon}</div>
+        <div class="quiz-text">${o.text}</div>
+      </div>
+    `).join('')}
+  `;
+}
+
+function quizAnswer(val, idx) {
+  quizAnswers.push(val);
+  document.querySelectorAll('.quiz-option')[idx].classList.add('selected');
+  setTimeout(() => { quizStep++; renderQuizStep(); }, 300);
+}
+
+function showQuizResult() {
+  // Calculer le résultat dominant
+  const counts = {};
+  quizAnswers.forEach(a => { counts[a] = (counts[a]||0) + 1; });
+  const top = Object.keys(counts).sort((a,b) => counts[b]-counts[a])[0];
+  const keys = ['classic','bold','natural','modern'];
+  const result = QUIZ_RESULTS[keys.find(k => k === top)] || QUIZ_RESULTS.modern;
+
+  document.getElementById('quiz-progress').innerHTML = QUIZ_QUESTIONS.map(() => `<div class="quiz-bar done"></div>`).join('');
+  document.getElementById('quiz-content').innerHTML = `
+    <div class="result-card">
+      <div class="result-emoji">${result.emoji}</div>
+      <div class="result-title">${result.title}</div>
+      <div class="result-desc">${result.desc}</div>
+      <div style="background:rgba(201,168,76,0.1);border:1px solid var(--gold-dark);border-radius:4px;padding:12px;margin-bottom:20px;">
+        <div style="font-size:10px;letter-spacing:2px;color:var(--gold);margin-bottom:4px;">SERVICE RECOMMANDÉ</div>
+        <div style="font-size:16px;color:var(--white);">${result.service}</div>
+      </div>
+      <button class="btn-primary" style="width:100%;margin-bottom:10px;" onclick="goTo('booking')">Réserver maintenant →</button>
+      <button class="btn-secondary" style="width:100%;" onclick="startQuiz()">Recommencer le quiz</button>
+    </div>
+  `;
+}
+
+// ===== FICHES CLIENTS =====
+async function renderFiches(filter = '') {
+  const c = document.getElementById('fiches-list');
+  const detail = document.getElementById('fiche-detail');
+  detail.style.display = 'none';
+  c.style.display = 'block';
+  c.innerHTML = '<p style="color:var(--text-muted);font-size:12px;letter-spacing:1px;padding:20px 0;">Chargement des clients...</p>';
+
+  let list = [];
+  try {
+    const data = await apiCall({ action: 'clients' });
+    list = Array.isArray(data) ? data.filter(cl => cl.nom) : [];
+  } catch(e) {
+    c.innerHTML = '<p style="color:#c0392b;font-size:12px;padding:20px 0;">❌ Erreur de chargement</p>';
+    return;
+  }
+
+  if (filter) list = list.filter(cl => cl.nom.toLowerCase().includes(filter.toLowerCase()));
+  list.sort((a,b) => a.nom.localeCompare(b.nom));
+
+  if (list.length === 0) {
+    c.innerHTML = `<div class="empty-state"><div class="empty-icon">👥</div><p class="empty-text">Aucun client</p></div>`;
+    return;
+  }
+
+  c.innerHTML = list.map(cl => {
+    const nb = Array.isArray(cl.rdvs) ? cl.rdvs.length : 0;
+    return `<div class="rdv-card" onclick='showFicheData(${JSON.stringify(cl).replace(/'/g,"&#39;")})' style="cursor:pointer;">
+      <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--gold-dark),var(--dark3));display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold-light);flex-shrink:0;">${cl.nom[0].toUpperCase()}</div>
+      <div class="rdv-info">
+        <div class="rdv-client">${cl.nom}</div>
+        <div class="rdv-detail">${nb} visite${nb > 1 ? 's' : ''} · ${cl.tel}</div>
+      </div>
+      <div style="color:var(--gold-dark);font-size:18px;">›</div>
+    </div>`;
+  }).join('');
+}
+
+function searchFiches() {
+  renderFiches(document.getElementById('fiche-search').value);
+}
+
+function showFicheData(cl) {
+  if (typeof cl === 'string') { try { cl = JSON.parse(cl); } catch(e) { return; } }
+  const rdvs = Array.isArray(cl.rdvs) ? cl.rdvs.sort((a,b) => String(b.date).localeCompare(String(a.date))) : [];
+  const total = rdvs.reduce((s,r) => s + Number(r.prix||0), 0);
+
+  // Calcul fidélité
+  const coupes = ['Coupe','Dégradé'];
+  const nbCoupes = rdvs.filter(r => coupes.some(c => String(r.service||'').includes(c))).length;
+  const prog = nbCoupes % 10;
+  const offerts = Math.floor(nbCoupes / 10);
+
+  document.getElementById('fiches-list').style.display = 'none';
+  const detail = document.getElementById('fiche-detail');
+  detail.style.display = 'block';
+
+  const months = ['jan','fév','mar','avr','mai','jun','jul','aoû','sep','oct','nov','déc'];
+
+  const stamps = Array.from({length:10}, (_,i) =>
+    `<div style="width:36px;height:36px;border-radius:50%;background:${i < prog ? 'linear-gradient(135deg,var(--gold),var(--gold-dark))' : 'var(--dark3)'};border:2px solid ${i < prog ? 'var(--gold)' : '#333'};display:flex;align-items:center;justify-content:center;font-size:${i < prog ? '14px' : '11px'};color:${i < prog ? '#000' : '#444'};">${i < prog ? '✂️' : (i+1)}</div>`
+  ).join('');
+
+  detail.innerHTML = `
+    <button onclick="renderFiches()" style="background:none;border:none;color:var(--gold);font-size:13px;letter-spacing:1px;cursor:pointer;margin-bottom:20px;">← Tous les clients</button>
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;">
+      <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--gold-dark),var(--dark3));display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--gold-light);">${cl.nom[0].toUpperCase()}</div>
+      <div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--white);">${cl.nom}</div>
+        <div style="font-size:12px;color:var(--text-muted);">${cl.tel}</div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid" style="margin-bottom:20px;">
+      <div class="stat-card"><div class="stat-num">${rdvs.length}</div><div class="stat-label">Visites</div></div>
+      <div class="stat-card"><div class="stat-num">${total}€</div><div class="stat-label">Total dépensé</div></div>
+    </div>
+
+    <!-- Fidélité -->
+    <div style="background:var(--dark2);border:1px solid ${offerts > 0 ? 'var(--gold)' : '#2a2a2a'};border-radius:12px;padding:18px;margin-bottom:20px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);">🎁 Fidélité · ${nbCoupes} coupe${nbCoupes>1?'s':''}</div>
+        ${offerts > 0 ? `<div style="background:rgba(201,168,76,0.2);color:var(--gold);font-size:11px;padding:3px 10px;border-radius:10px;">${offerts} offerte${offerts>1?'s':''} !</div>` : ''}
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:12px;">${stamps}</div>
+      <div style="font-size:12px;color:var(--text-muted);text-align:center;">
+        ${prog === 0 && nbCoupes > 0 ? '🎉 Coupe offerte disponible !' : `${10-prog} coupe${10-prog>1?'s':''} avant la prochaine offerte`}
+      </div>
+      ${offerts > 0 ? `<button onclick="utiliserCoupeOfferte('${cl.nom}')" style="width:100%;margin-top:12px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#000;border:none;padding:10px;border-radius:8px;font-size:11px;letter-spacing:2px;cursor:pointer;font-weight:600;">VALIDER COUPE OFFERTE ✓</button>` : ''}
+    </div>
+
+    <p class="category-label">Historique</p>
+    ${rdvs.length === 0 ? '<p style="color:var(--text-muted);font-size:13px;">Aucun historique</p>' :
+    rdvs.map(r => {
+      let dateLabel = '';
+      try {
+        const ds = String(r.date||'');
+        const d = new Date((ds.includes('T') ? ds : ds + 'T12:00:00'));
+        if (!isNaN(d)) dateLabel = `${d.getDate()} ${months[d.getMonth()]}`;
+      } catch(e) {}
+      return `<div class="rdv-card" style="margin-bottom:8px;">
+        <div style="text-align:center;min-width:52px;">
+          <div style="font-size:14px;color:var(--gold);font-family:'Cormorant Garamond',serif;line-height:1.3;">${dateLabel}</div>
+          <div style="font-size:11px;color:var(--text-muted);">${r.time||''}</div>
+        </div>
+        <div class="rdv-info">
+          <div class="rdv-client">${r.service||''}</div>
+          <div class="rdv-detail">${r.coiffeuse||''}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px;">
+          <div class="rdv-badge">${r.prix||0}€</div>
+          <button onclick='genererFacture(${JSON.stringify(r).replace(/'/g,"&#39;")})' style="background:none;border:none;color:var(--gold-dark);font-size:16px;cursor:pointer;">🧾</button>
+        </div>
+      </div>`;
+    }).join('')}
+  `;
+}
+
+function utiliserCoupeOfferte(nom) {
+  showToast(`✓ Coupe offerte validée pour ${nom} !`);
+  // Note dans localStorage pour suivi
+  const key = 'coupe_offerte_' + nom.toLowerCase().replace(/\s/g,'_');
+  const utilisees = JSON.parse(localStorage.getItem(key) || '0');
+  localStorage.setItem(key, JSON.stringify(utilisees + 1));
+}
+
+// ===== AJOUT CLIENT MANUEL =====
+function showAddClient() {
+  document.getElementById('fiches-list').style.display = 'none';
+  document.getElementById('fiche-detail').style.display = 'none';
+  document.getElementById('fiche-add').style.display = 'block';
+}
+
+async function saveNewClient() {
+  const prenom = document.getElementById('nc-prenom').value.trim();
+  const nom = document.getElementById('nc-nom').value.trim();
+  const tel = document.getElementById('nc-tel').value.trim();
+  const adresse = document.getElementById('nc-adresse').value.trim();
+  const genre = document.getElementById('nc-genre').value;
+  const coiffeuse = document.getElementById('nc-coiffeuse').value;
+  const prefs = document.getElementById('nc-prefs').value.trim();
+
+  if (!prenom || !nom || !tel) { showToast('⚠️ Prénom, nom et téléphone requis'); return; }
+
+  showToast('Enregistrement...');
+  try {
+    await apiCall({ action:'addClient', prenom, nom, adresse, tel, coiffeuse, preferences: prefs, genre });
+    showToast('✓ Client ajouté !');
+    ['nc-prenom','nc-nom','nc-tel','nc-adresse','nc-prefs'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('nc-coiffeuse').value = '';
+    document.getElementById('nc-genre').value = 'Femme';
+    renderFiches();
+  } catch(e) {
+    showToast('❌ Erreur, réessaie');
+  }
+}
+
+// ===== FACTURE PDF =====
+function genererFacture(rdv) {
+  if (typeof rdv === 'string') {
+    try { rdv = JSON.parse(rdv.replace(/&quot;/g,'"').replace(/&#39;/g,"'")); } catch(e) { return; }
+  }
+
+  // Corriger la date
+  let dateLabel = 'N/A';
+  try {
+    let ds = String(rdv.date || '');
+    if (ds.includes('T')) {
+      const d = new Date(ds);
+      const days2 = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+      const months2 = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+      dateLabel = `${days2[d.getUTCDay()]} ${d.getUTCDate()} ${months2[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+    } else if (ds.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      const [y,m,dd] = ds.split('-').map(Number);
+      const d = new Date(y, m-1, dd);
+      const days2 = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+      const months2 = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+      dateLabel = `${days2[d.getDay()]} ${dd} ${months2[m-1]} ${y}`;
+    }
+  } catch(e) {}
+
+  // Corriger l'heure
+  let timeLabel = String(rdv.time || '');
+  if (timeLabel.includes('T')) {
+    try {
+      const t = new Date(timeLabel);
+      timeLabel = `${String(t.getUTCHours()).padStart(2,'0')}:${String(t.getUTCMinutes()).padStart(2,'0')}`;
+    } catch(e) { timeLabel = ''; }
+  }
+
+  // Nom client
+  const clientNom = String(rdv.nom || rdv.client || '').trim() || 'Client';
+
+  const num = 'N°' + String(rdv.id || Date.now()).slice(-6);
+  const now = new Date();
+  const heure = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+  const w = window.open('', '_blank');
+  w.document.write(`
+    <!DOCTYPE html>
+    <html><head><meta charset="UTF-8">
+    <title>Ticket ${num}</title>
+    <style>
+      * { margin:0; padding:0; box-sizing:border-box; }
+      body {
+        font-family: 'Courier New', Courier, monospace;
+        background: #f0f0f0;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 40px 20px;
+        min-height: 100vh;
+      }
+      .ticket {
+        background: #fff;
+        width: 320px;
+        padding: 0;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        position: relative;
+      }
+      /* Bord dentelé haut */
+      .ticket::before {
+        content: '';
+        display: block;
+        height: 16px;
+        background: radial-gradient(circle at 8px -4px, #f0f0f0 8px, #fff 8px);
+        background-size: 16px 16px;
+      }
+      /* Bord dentelé bas */
+      .ticket::after {
+        content: '';
+        display: block;
+        height: 16px;
+        background: radial-gradient(circle at 8px 20px, #f0f0f0 8px, #fff 8px);
+        background-size: 16px 16px;
+      }
+      .ticket-inner { padding: 10px 24px 20px; }
+      .salon-name {
+        text-align: center;
+        font-size: 22px;
+        font-weight: bold;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        color: #111;
+        margin-bottom: 2px;
+      }
+      .salon-sub {
+        text-align: center;
+        font-size: 11px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: #888;
+        margin-bottom: 16px;
+      }
+      .divider {
+        border: none;
+        border-top: 1px dashed #bbb;
+        margin: 12px 0;
+      }
+      .divider-double {
+        border: none;
+        border-top: 2px solid #111;
+        margin: 12px 0;
+      }
+      .row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        margin-bottom: 5px;
+        color: #111;
+      }
+      .row.muted { color: #888; font-size: 12px; }
+      .row.total {
+        font-size: 18px;
+        font-weight: bold;
+        margin-top: 4px;
+        letter-spacing: 1px;
+      }
+      .row.total span:last-child { color: #c9a84c; }
+      .label { color: #555; }
+      .center { text-align: center; font-size: 12px; color: #888; margin: 6px 0; }
+      .merci {
+        text-align: center;
+        font-size: 14px;
+        font-weight: bold;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        margin: 14px 0 8px;
+        color: #111;
+      }
+      .stars { text-align: center; font-size: 18px; color: #c9a84c; margin-bottom: 6px; letter-spacing: 4px; }
+      .barcode {
+        text-align: center;
+        margin: 12px 0 4px;
+        font-size: 32px;
+        letter-spacing: -1px;
+        color: #111;
+        line-height: 1;
+      }
+      .barcode-num { text-align:center; font-size: 10px; color: #888; letter-spacing: 3px; }
+      @media print {
+        body { background: white; padding: 0; }
+        .ticket { box-shadow: none; }
+      }
+    </style>
+    </head><body>
+    <div class="ticket">
+      <div class="ticket-inner">
+
+        <div class="salon-name">Chez Romu</div>
+        <div class="salon-sub">Salon de Coiffure</div>
+
+        <hr class="divider">
+
+        <div class="row muted"><span>Date</span><span>${dateLabel}</span></div>
+        <div class="row muted"><span>Heure</span><span>${timeLabel}</span></div>
+        <div class="row muted"><span>Ticket</span><span>${num}</span></div>
+
+        <hr class="divider">
+
+        <div class="row"><span class="label">Client</span><span>${clientNom}</span></div>
+        <div class="row"><span class="label">Coiffeuse</span><span>${rdv.coiffeuse||''}</span></div>
+
+        <hr class="divider">
+
+        <div class="row muted" style="font-size:11px;text-transform:uppercase;letter-spacing:1px;"><span>Prestation</span><span>Prix</span></div>
+        <div class="row" style="margin-top:6px;"><span>${rdv.service}</span><span>${rdv.prix},00 €</span></div>
+
+        <hr class="divider-double">
+
+        <div class="row total"><span>TOTAL TTC</span><span>${rdv.prix},00 €</span></div>
+        <div class="row muted" style="font-size:11px;"><span>TVA (10%)</span><span>${(rdv.prix * 0.1).toFixed(2)} €</span></div>
+        <div class="row muted" style="font-size:11px;"><span>HT</span><span>${(rdv.prix * 0.9).toFixed(2)} €</span></div>
+
+        <hr class="divider">
+
+        <div class="center">Règlement : Espèces / CB</div>
+        <div class="center">Imprimé le ${new Date().toLocaleDateString('fr-FR')} à ${heure}</div>
+
+        <hr class="divider">
+
+        <div class="stars">★ ★ ★ ★ ★</div>
+        <div class="merci">Merci !</div>
+        <div class="center">À bientôt chez Romu 💈</div>
+        <div class="center" style="margin-top:4px;">Conservez ce ticket</div>
+
+        <div class="barcode">||| || ||| | || ||| |||| || ||| ||</div>
+        <div class="barcode-num">${rdv.id}</div>
+
+      </div>
+    </div>
+    <script>window.onload = () => window.print();<\/script>
+    </body></html>
+  `);
+  w.document.close();
+}
+
+// ===== PLANNING SEMAINE =====
+let planningDate = new Date();
+let planningCoif = null;
+
+function planningPrev() { planningDate.setDate(planningDate.getDate()-7); renderPlanningDetail(); }
+function planningNext() { planningDate.setDate(planningDate.getDate()+7); renderPlanningDetail(); }
+
+function getMondayOf(d) {
+  const day = new Date(d);
+  const diff = day.getDay() === 0 ? -6 : 1 - day.getDay();
+  day.setDate(day.getDate() + diff);
+  return day;
+}
+
+function dateStr(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function backToPlanning() {
+  planningCoif = null;
+  document.getElementById('planning-select').style.display = 'block';
+  document.getElementById('planning-detail').style.display = 'none';
+}
+
+async function renderPlanning() {
+  // Afficher la vue sélection coiffeuse
+  document.getElementById('planning-select').style.display = 'block';
+  document.getElementById('planning-detail').style.display = 'none';
+
+  const rdvs = await getRdvs();
+  const coiffeuseSet = new Set(rdvs.map(r => r.coiffeuse).filter(Boolean));
+  COIFFEUSES.forEach(c => coiffeuseSet.add(c.nom));
+  const coiffeuses = [...coiffeuseSet].sort();
+
+  const colorMap = {
+    'Julie':   { bg:'#fff3e0', border:'#ff9800', text:'#6d3b00' },
+    'Pauline': { bg:'#f3e5f5', border:'#9c27b0', text:'#4a0072' },
+    'Manon':   { bg:'#e8f5e9', border:'#4caf50', text:'#1b5e20' },
+  };
+  const defaultColor = { bg:'#e3f2fd', border:'#2196f3', text:'#0d47a1' };
+
+  const today = dateStr(new Date());
+  const c = document.getElementById('planning-coif-cards');
+
+  c.innerHTML = coiffeuses.map(coif => {
+    const col = colorMap[coif] || defaultColor;
+    const rdvsToday = rdvs.filter(r => r.date === today && r.coiffeuse === coif).length;
+    const rdvsSemaine = rdvs.filter(r => {
+      const monday = getMondayOf(new Date());
+      const sunday = new Date(monday); sunday.setDate(monday.getDate()+6);
+      const d = new Date(r.date + 'T12:00:00');
+      return r.coiffeuse === coif && d >= monday && d <= sunday;
+    }).length;
+
+    return `<div onclick="openPlanningCoif('${coif}')" style="background:${col.bg};border:2px solid ${col.border};border-radius:16px;padding:20px;margin-bottom:14px;cursor:pointer;display:flex;align-items:center;gap:16px;">
+      <div style="width:52px;height:52px;border-radius:50%;background:${col.border};display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:24px;color:#fff;flex-shrink:0;">${coif[0]}</div>
+      <div style="flex:1;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:${col.text};">${coif}</div>
+        <div style="font-size:11px;color:${col.text};opacity:0.7;margin-top:4px;">${rdvsToday} RDV aujourd'hui · ${rdvsSemaine} cette semaine</div>
+      </div>
+      <div style="font-size:22px;color:${col.border};">›</div>
+    </div>`;
+  }).join('');
+}
+
+function openPlanningCoif(coif) {
+  planningCoif = coif;
+  planningDate = new Date();
+  document.getElementById('planning-select').style.display = 'none';
+  document.getElementById('planning-detail').style.display = 'block';
+  document.getElementById('planning-coif-title').textContent = coif;
+  renderPlanningDetail();
+}
+
+async function renderPlanningDetail() {
+  const grid = document.getElementById('planning-grid');
+  grid.innerHTML = '<p style="color:#888;font-size:12px;padding:8px 0;">Chargement...</p>';
+
+  const monday = getMondayOf(planningDate);
+  const days = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    days.push(d);
+  }
+
+  const months = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+  const dayNames = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+
+  document.getElementById('planning-label').textContent =
+    `${days[0].getDate()} ${months[days[0].getMonth()]} – ${days[6].getDate()} ${months[days[6].getMonth()]} ${days[6].getFullYear()}`;
+
+  const rdvs = await getRdvs();
+  const bloques = getBloqués();
+  const today = dateStr(new Date());
+
+  const colorMap = {
+    'Julie':   { bg:'#fff3e0', border:'#ff9800', text:'#6d3b00', rdvBg:'#ffe0b2' },
+    'Pauline': { bg:'#f3e5f5', border:'#9c27b0', text:'#4a0072', rdvBg:'#e1bee7' },
+    'Manon':   { bg:'#e8f5e9', border:'#4caf50', text:'#1b5e20', rdvBg:'#c8e6c9' },
+  };
+  const col = colorMap[planningCoif] || { bg:'#e3f2fd', border:'#2196f3', text:'#0d47a1', rdvBg:'#bbdefb' };
+
+  let html = '<div style="display:flex;flex-direction:column;gap:8px;">';
+
+  days.forEach((d, i) => {
+    const ds = dateStr(d);
+    const isToday = ds === today;
+    const isBloque = bloques.some(b => b.date === ds && (b.coif === planningCoif || b.coif === 'Toutes'));
+    const dayRdvs = rdvs.filter(r => r.date === ds && r.coiffeuse === planningCoif).sort((a,b) => a.time.localeCompare(b.time));
+
+    html += `<div style="background:${isToday ? col.bg : '#1a1a1a'};border:${isToday ? `2px solid ${col.border}` : '1px solid #2a2a2a'};border-radius:12px;padding:14px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:${isBloque || dayRdvs.length > 0 ? '10px' : '0'};">
+        <div style="font-size:11px;font-weight:700;color:${isToday ? col.border : 'var(--text-muted)'};letter-spacing:1px;min-width:32px;">${dayNames[i]}</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:18px;color:${isToday ? col.text : 'var(--white)'};">${d.getDate()} ${months[d.getMonth()]}</div>
+        ${isToday ? `<div style="background:${col.border};color:#fff;font-size:10px;padding:2px 8px;border-radius:10px;margin-left:auto;">Aujourd'hui</div>` : ''}
+        ${dayRdvs.length > 0 ? `<div style="margin-left:auto;font-size:11px;color:var(--text-muted);">${dayRdvs.length} RDV</div>` : ''}
+      </div>`;
+
+    if (isBloque) {
+      const b = bloques.find(bl => bl.date === ds && (bl.coif === planningCoif || bl.coif === 'Toutes'));
+      html += `<div style="background:#ffebee;border-left:3px solid #f44336;padding:8px 10px;border-radius:4px;color:#b71c1c;font-size:12px;">🚫 ${b ? b.raison : 'Congé'}</div>`;
+    } else if (dayRdvs.length === 0) {
+      html += `<div style="color:#444;font-size:12px;font-style:italic;">Aucun rendez-vous</div>`;
+    } else {
+      html += '<div style="display:flex;flex-direction:column;gap:6px;">';
+      dayRdvs.forEach(r => {
+        html += `<div style="background:${col.rdvBg};border-left:3px solid ${col.border};padding:8px 12px;border-radius:6px;display:flex;align-items:center;gap:10px;">
+          <div style="font-weight:700;font-size:14px;color:${col.text};min-width:42px;">${r.time}</div>
+          <div style="flex:1;">
+            <div style="font-size:13px;color:${col.text};font-weight:600;">${r.nom}</div>
+            <div style="font-size:11px;color:${col.text};opacity:0.7;">${r.service} · ${r.prix}€</div>
+          </div>
+        </div>`;
+      });
+      html += '</div>';
+    }
+    html += '</div>';
+  });
+
+  html += '</div>';
+  grid.innerHTML = html;
+}
+
+// ===== CONTACT =====
+async function envoyerContact() {
+  const nom = document.getElementById('contact-nom').value.trim();
+  const email = document.getElementById('contact-email').value.trim();
+  const message = document.getElementById('contact-message').value.trim();
+  if (!nom || !email || !message) { showToast('⚠️ Remplis tous les champs'); return; }
+  showToast('Envoi en cours...');
+  try {
+    await apiCall({ action: 'contact', nom, email, message });
+    document.getElementById('contact-nom').value = '';
+    document.getElementById('contact-email').value = '';
+    document.getElementById('contact-message').value = '';
+    showToast('✓ Message envoyé !');
+  } catch(e) {
+    showToast('❌ Erreur, réessaie');
+  }
+}
+
+// ===== MUSIQUE =====
+let musicPlaying = false;
+function toggleMusic() {
+  const audio = document.getElementById('bg-music');
+  const btn = document.getElementById('music-btn');
+  if (musicPlaying) {
+    audio.pause();
+    btn.style.opacity = '0.4';
+    musicPlaying = false;
+  } else {
+    audio.play().catch(() => {});
+    btn.style.opacity = '1';
+    musicPlaying = true;
+  }
+}
+
+// ===== CARTE FIDELITE =====
+function showFidChoix() {
+  document.getElementById('fid-choix').style.display = 'block';
+  document.getElementById('fid-creer').style.display = 'none';
+  document.getElementById('fid-login').style.display = 'none';
+  document.getElementById('fid-result').style.display = 'none';
+}
+
+function showFidCreer() {
+  document.getElementById('fid-choix').style.display = 'none';
+  document.getElementById('fid-creer').style.display = 'block';
+  document.getElementById('fid-login').style.display = 'none';
+  document.getElementById('fid-result').style.display = 'none';
+}
+
+function showFidLogin() {
+  document.getElementById('fid-choix').style.display = 'none';
+  document.getElementById('fid-creer').style.display = 'none';
+  document.getElementById('fid-login').style.display = 'block';
+  document.getElementById('fid-result').style.display = 'none';
+}
+
+async function creerCarte() {
+  const prenom = document.getElementById('fid-creer-prenom').value.trim();
+  const nom = document.getElementById('fid-creer-nom').value.trim();
+  const tel = document.getElementById('fid-creer-tel').value.trim();
+  const pwd = document.getElementById('fid-creer-pwd').value.trim();
+  if (!prenom || !nom || !tel || !pwd) { showToast('Remplis tous les champs'); return; }
+  showToast('Creation en cours...');
+  try {
+    const data = await apiCall({ action:'creerCarte', prenom, nom, tel, pwd });
+    if (data.ok) {
+      showToast('Carte creee !');
+      document.getElementById('fid-creer-prenom').value = '';
+      document.getElementById('fid-creer-nom').value = '';
+      document.getElementById('fid-creer-tel').value = '';
+      document.getElementById('fid-creer-pwd').value = '';
+      afficherCarte(prenom, nom, 0, 0, 0);
+    } else {
+      showToast(data.msg || 'Erreur');
+    }
+  } catch(e) { showToast('Erreur de connexion'); }
+}
+
+async function loginCarte() {
+  const nom = document.getElementById('fid-login-nom').value.trim();
+  const pwd = document.getElementById('fid-login-pwd').value.trim();
+  if (!nom || !pwd) { showToast('Remplis tous les champs'); return; }
+  showToast('Connexion...');
+  try {
+    const data = await apiCall({ action:'loginCarte', nom, pwd });
+    if (data.ok) {
+      afficherCarte(data.prenom || nom, data.nom || nom, data.passages || 0, data.progression || 0, data.offerts || 0);
+    } else {
+      showToast(data.msg || 'Nom ou code incorrect');
+    }
+  } catch(e) { showToast('Erreur de connexion'); }
+}
+
+function afficherCarte(prenom, nom, passages, prog, offerts) {
+  document.getElementById('fid-choix').style.display = 'none';
+  document.getElementById('fid-creer').style.display = 'none';
+  document.getElementById('fid-login').style.display = 'none';
+  const result = document.getElementById('fid-result');
+  result.style.display = 'block';
+  const reste = 10 - prog;
+  const stamps = Array.from({length:10}, (_,i) =>
+    `<div style="width:44px;height:44px;border-radius:50%;background:${i < prog ? 'linear-gradient(135deg,var(--gold),var(--gold-dark))' : 'var(--dark3)'};border:2px solid ${i < prog ? 'var(--gold)' : '#333'};display:flex;align-items:center;justify-content:center;font-size:${i < prog ? '18px' : '14px'};color:${i < prog ? '#000' : '#444'};">${i < prog ? '✂' : (i+1)}</div>`
+  ).join('');
+  result.innerHTML = `
+    <div style="background:var(--dark2);border:1px solid var(--gold-dark);border-radius:16px;padding:24px;margin-bottom:16px;">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--white);margin-bottom:4px;">Bonjour ${prenom} !</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px;">${passages} passage${passages > 1 ? 's' : ''} au total</div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px;">${stamps}</div>
+      <div style="background:var(--dark3);border-radius:8px;padding:12px;text-align:center;">
+        ${prog === 0 && passages === 0
+          ? '<p style="color:var(--text-muted);font-size:13px;">Bienvenue ! Votre carte est prete</p>'
+          : prog === 0
+            ? '<p style="color:var(--gold);font-size:14px;">Coupe offerte disponible !</p>'
+            : `<p style="color:var(--text-muted);font-size:13px;">Plus que <strong style="color:var(--gold);">${reste} coupe${reste > 1 ? 's' : ''}</strong> avant la prochaine offerte !</p>`
+        }
+      </div>
+      ${offerts > 0 ? `<div style="margin-top:12px;background:rgba(201,168,76,0.1);border:1px solid var(--gold);border-radius:8px;padding:12px;text-align:center;"><p style="color:var(--gold);font-size:14px;">Coupe offerte disponible !</p></div>` : ''}
+    </div>
+    <button class="btn-primary" style="width:100%;margin-bottom:10px;" onclick="goTo('booking')">Prendre RDV</button>
+    <button class="btn-secondary" style="width:100%;" onclick="showFidChoix()">Retour</button>
+  `;
+}
+
+// ===== ESSAYAGE VIRTUEL =====
+const ESSAYAGE_DATA = {
+  oval: {
+    label: 'Visage Ovale',
+    desc: 'Tu as la chance d\'avoir le visage ideal ! Presque toutes les coiffures te vont.',
+    coiffures: [
+      { nom: 'Coupe Pixie', svg: '👩', desc: 'Courte et moderne, met en valeur les traits fins', service: 'Coupe femme' },
+      { nom: 'Bob Classique', svg: '💇‍♀️', desc: 'Elegant et intemporel, parfait pour toi', service: 'Coupe femme' },
+      { nom: 'Longs Ondules', svg: '🌊', desc: 'Les ondulations subliment ta forme de visage', service: 'Brushing' },
+      { nom: 'Carre Long', svg: '✂️', desc: 'Tendance et facile a entretenir', service: 'Coupe femme' },
+    ]
+  },
+  rond: {
+    label: 'Visage Rond',
+    desc: 'Les coupes qui allongent le visage te mettront en valeur.',
+    coiffures: [
+      { nom: 'Degrade Haut', svg: '💈', desc: 'Allonge visuellement le visage', service: 'Degrade' },
+      { nom: 'Coupe Asymetrique', svg: '✂️', desc: 'Cree des angles pour affiner', service: 'Coupe femme' },
+      { nom: 'Longs Raides', svg: '👱‍♀️', desc: 'Effet allongeant tres efficace', service: 'Lissage' },
+      { nom: 'Carre Plongeant', svg: '💇‍♀️', desc: 'Les longueurs devant affinent le visage', service: 'Coupe femme' },
+    ]
+  },
+  carre: {
+    label: 'Visage Carre',
+    desc: 'Les coupes avec du volume sur le dessus adoucissent ton visage.',
+    coiffures: [
+      { nom: 'Boucles Volumineuses', svg: '🌀', desc: 'Adoucit les angles du visage', service: 'Brushing' },
+      { nom: 'Frange Laterale', svg: '💇‍♀️', desc: 'Casse la symetrie et adoucit', service: 'Coupe femme' },
+      { nom: 'Layers', svg: '✂️', desc: 'Le volume en cascade equilibre le visage', service: 'Coupe femme' },
+      { nom: 'Chignon Haut', svg: '👸', desc: 'Elonge et met en valeur le cou', service: 'Brushing' },
+    ]
+  },
+  long: {
+    label: 'Visage Long',
+    desc: 'Les coupes avec du volume sur les cotes equilibrent ton visage.',
+    coiffures: [
+      { nom: 'Carre Court', svg: '💇‍♀️', desc: 'Raccourcit visuellement le visage', service: 'Coupe femme' },
+      { nom: 'Frange Droite', svg: '✂️', desc: 'Reduit la longueur visuelle du visage', service: 'Coupe femme' },
+      { nom: 'Boucles Mi-Long', svg: '🌀', desc: 'Le volume lateral equilibre', service: 'Brushing' },
+      { nom: 'Waves Beach', svg: '🌊', desc: 'Donne du volume et de la largeur', service: 'Brushing' },
+    ]
+  },
+  coeur: {
+    label: 'Visage Coeur',
+    desc: 'Les coupes avec du volume en bas equilibrent ton visage.',
+    coiffures: [
+      { nom: 'Bob avec Volume', svg: '💇‍♀️', desc: 'Volume en bas pour equilibrer', service: 'Coupe femme' },
+      { nom: 'Longs Avec Meches', svg: '✨', desc: 'Allegit le haut du visage', service: 'Meches' },
+      { nom: 'Carre Plongeant', svg: '✂️', desc: 'Allonge et equilibre le menton', service: 'Coupe femme' },
+      { nom: 'Balayage', svg: '🎨', desc: 'La couleur attire l\'attention vers le bas', service: 'Balayage' },
+    ]
+  },
+  triangle: {
+    label: 'Visage Triangle',
+    desc: 'Les coupes avec du volume en haut equilibrent ton visage.',
+    coiffures: [
+      { nom: 'Volume sur le Dessus', svg: '💈', desc: 'Equilibre le bas plus large', service: 'Coupe femme' },
+      { nom: 'Pixie avec Crete', svg: '✂️', desc: 'Volume en haut tres efficace', service: 'Coupe femme' },
+      { nom: 'Ondulations Hautes', svg: '🌀', desc: 'Le volume en haut equilibre', service: 'Brushing' },
+      { nom: 'Carre Court', svg: '💇‍♀️', desc: 'Reduit l\'ecart entre haut et bas', service: 'Coupe femme' },
+    ]
+  }
+};
+
+let selectedVisage = null;
+
+function selectVisage(type, label) {
+  selectedVisage = type;
+  document.querySelectorAll('.visage-card').forEach(c => c.style.borderColor = '#2a2a2a');
+  event.currentTarget.style.borderColor = 'var(--gold)';
+  showEssayageResult(type);
+}
+
+function showEssayageResult(type) {
+  const data = ESSAYAGE_DATA[type];
+  const result = document.getElementById('essayage-result');
+  result.style.display = 'block';
+  result.style.animation = 'fadeUp 0.4s ease';
+
+  result.innerHTML = `
+    <div style="background:linear-gradient(135deg,rgba(201,168,76,0.1),rgba(10,10,10,0.9));border:1px solid var(--gold-dark);border-radius:16px;padding:20px;margin-bottom:20px;">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold);margin-bottom:6px;">${data.label}</div>
+      <div style="font-size:12px;color:var(--text-muted);">${data.desc}</div>
+    </div>
+    <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:14px;">Coiffures recommandees</p>
+    ${data.coiffures.map((c, i) => `
+      <div style="background:var(--dark2);border:1px solid #2a2a2a;border-radius:16px;padding:18px 20px;margin-bottom:10px;display:flex;align-items:center;gap:16px;animation:fadeUp 0.3s ease ${i*0.1}s both;">
+        <div style="font-size:36px;width:50px;text-align:center;">${c.svg}</div>
+        <div style="flex:1;">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--white);">${c.nom}</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:3px;">${c.desc}</div>
+        </div>
+        <button onclick="goTo('booking')" style="background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#000;border:none;padding:8px 12px;border-radius:10px;font-size:10px;cursor:pointer;letter-spacing:1px;white-space:nowrap;">Essayer →</button>
+      </div>
+    `).join('')}
+  `;
+
+  result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ===== ROUE DES PROMOS =====
+const PROMOS = [
+  { label: '-10%', color: '#e91e63', valeur: 'Reduction de 10% sur votre prochaine visite' },
+  { label: 'Brushing offert', color: '#9c27b0', valeur: 'Un brushing offert lors de votre prochain RDV' },
+  { label: '-20%', color: '#3f51b5', valeur: 'Reduction de 20% sur votre prochaine visite' },
+  { label: 'Produit offert', color: '#009688', valeur: 'Un produit capillaire offert en salon' },
+  { label: 'Retente!', color: '#ff5722', valeur: null },
+  { label: 'Soin offert', color: '#4caf50', valeur: 'Un soin cheveux offert lors de votre prochain RDV' },
+  { label: '-5%', color: '#ff9800', valeur: 'Reduction de 5% sur votre prochaine visite' },
+  { label: 'Coupe -15%', color: '#795548', valeur: 'Reduction de 15% sur votre prochaine coupe' },
+];
+
+let rouePeutJouer = false;
+let roueTourne = false;
+
+function initRoue() {
+  const canvas = document.getElementById('roue-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  drawRoue(ctx, 0);
+}
+
+function drawRoue(ctx, rotation) {
+  const cx = 140, cy = 140, r = 130;
+  const n = PROMOS.length;
+  const angle = (2 * Math.PI) / n;
+  ctx.clearRect(0, 0, 280, 280);
+
+  PROMOS.forEach((p, i) => {
+    const start = rotation + i * angle - Math.PI / 2;
+    const end = start + angle;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, start, end);
+    ctx.closePath();
+    ctx.fillStyle = p.color;
+    ctx.fill();
+    ctx.strokeStyle = '#111';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(start + angle / 2);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 11px Montserrat, sans-serif';
+    ctx.fillText(p.label, r - 10, 4);
+    ctx.restore();
+  });
+
+  // Centre
+  ctx.beginPath();
+  ctx.arc(cx, cy, 20, 0, 2 * Math.PI);
+  ctx.fillStyle = '#c9a84c';
+  ctx.fill();
+  ctx.strokeStyle = '#111';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+}
+
+async function jouerRoue() {
+  const nom = document.getElementById('roue-nom').value.trim();
+  const pwd = document.getElementById('roue-pwd').value.trim();
+  if (!nom || !pwd) { showToast('Connecte-toi avec ta carte fidelite'); return; }
+
+  // Verifier si deja joue ce mois
+  const moisKey = 'roue_' + nom.toLowerCase() + '_' + new Date().getMonth() + '_' + new Date().getFullYear();
+  if (localStorage.getItem(moisKey)) {
+    showToast('Tu as deja joue ce mois !');
+    const promo = localStorage.getItem(moisKey + '_promo');
+    if (promo) afficherPromo(JSON.parse(promo));
+    return;
+  }
+
+  // Verifier carte fidelite
+  showToast('Verification...');
+  try {
+    const data = await apiCall({ action: 'loginCarte', nom, pwd });
+    if (!data.ok) { showToast('Code incorrect'); return; }
+
+    if (roueTourne) return;
+    roueTourne = true;
+
+    // Tirer au sort
+    const gagne = Math.floor(Math.random() * PROMOS.length);
+    const canvas = document.getElementById('roue-canvas');
+    const ctx = canvas.getContext('2d');
+    const n = PROMOS.length;
+    const angleParCase = (2 * Math.PI) / n;
+    const targetAngle = (2 * Math.PI * 5) + (Math.PI * 2 - gagne * angleParCase);
+
+    let current = 0;
+    const duration = 4000;
+    const start = Date.now();
+
+    function animate() {
+      const elapsed = Date.now() - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      current = targetAngle * ease;
+      drawRoue(ctx, current);
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        roueTourne = false;
+        const promo = PROMOS[gagne];
+        localStorage.setItem(moisKey, '1');
+        localStorage.setItem(moisKey + '_promo', JSON.stringify(promo));
+        afficherPromo(promo);
+      }
+    }
+    animate();
+  } catch(e) { showToast('Erreur de connexion'); }
+}
+
+function afficherPromo(promo) {
+  const result = document.getElementById('roue-result');
+  result.style.display = 'block';
+  if (!promo.valeur) {
+    result.innerHTML = `
+      <div style="background:var(--dark2);border:1px solid #333;border-radius:16px;padding:24px;text-align:center;">
+        <div style="font-size:48px;margin-bottom:12px;">😅</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--white);">Pas de chance !</div>
+        <div style="font-size:13px;color:var(--text-muted);margin-top:8px;">Retente le mois prochain !</div>
+      </div>`;
+  } else {
+    result.innerHTML = `
+      <div style="background:linear-gradient(135deg,rgba(156,39,176,0.15),rgba(10,10,10,0.9));border:2px solid #9c27b0;border-radius:16px;padding:24px;text-align:center;animation:popIn 0.5s cubic-bezier(0.34,1.56,0.64,1);">
+        <div style="font-size:48px;margin-bottom:12px;">🎉</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:28px;color:#fff;margin-bottom:8px;">${promo.label}</div>
+        <div style="font-size:13px;color:#ce93d8;margin-bottom:20px;">${promo.valeur}</div>
+        <div style="background:rgba(255,255,255,0.1);border-radius:8px;padding:10px;font-size:11px;color:#fff;margin-bottom:16px;">Montrez ce message en salon pour profiter de votre promo</div>
+        <button class="btn-primary" style="width:100%;" onclick="goTo('booking')">Reserver maintenant</button>
+      </div>`;
+  }
+  result.scrollIntoView({ behavior: 'smooth' });
+}
+
+// ===== TARIFS =====
+let tarifsCache = null;
+
+async function getTarifs() {
+  if (tarifsCache) return tarifsCache;
+  try {
+    const data = await apiCall({ action: 'getTarifs' });
+    tarifsCache = Array.isArray(data) ? data : [];
+    return tarifsCache;
+  } catch(e) { return []; }
+}
+
+async function renderTarifsClient() {
+  const c = document.getElementById('tarifs-content');
+  c.innerHTML = '<p style="color:var(--text-muted);font-size:12px;">Chargement...</p>';
+  const tarifs = await getTarifs();
+
+  if (tarifs.length === 0) {
+    c.innerHTML = '<p style="color:var(--text-muted);">Aucun tarif disponible</p>';
+    return;
+  }
+
+  // Grouper par catégorie
+  const cats = {};
+  tarifs.forEach(t => {
+    if (!cats[t.categorie]) cats[t.categorie] = [];
+    cats[t.categorie].push(t);
+  });
+
+  let html = '';
+  Object.keys(cats).forEach(cat => {
+    html += `<p class="category-label">${cat}</p>`;
+    cats[cat].forEach(t => {
+      html += `
+        <div style="background:var(--dark2);border:1px solid #2a2a2a;border-radius:12px;padding:14px 18px;margin-bottom:8px;display:flex;align-items:center;gap:12px;">
+          <div style="flex:1;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--white);">${t.nom}</div>
+            ${t.description ? `<div style="font-size:11px;color:var(--text-muted);margin-top:2px;">${t.description}</div>` : ''}
+            ${t.duree ? `<div style="font-size:10px;color:var(--text-muted);margin-top:2px;">⏱ ${t.duree}</div>` : ''}
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold);font-weight:600;">${t.prix}€</div>
+          </div>
+        </div>`;
+    });
+  });
+
+  html += `<div style="margin-top:20px;"><button class="btn-primary" style="width:100%;" onclick="goTo('booking')">Réserver maintenant →</button></div>`;
+  c.innerHTML = html;
+}
+
+async function renderTarifsPro() {
+  tarifsCache = null;
+  const c = document.getElementById('tarifs-pro-list');
+  c.innerHTML = '<p style="color:var(--text-muted);font-size:12px;">Chargement...</p>';
+  const tarifs = await getTarifs();
+
+  if (tarifs.length === 0) {
+    c.innerHTML = '<p style="color:var(--text-muted);">Aucun tarif</p>';
+    return;
+  }
+
+  const cats = {};
+  tarifs.forEach(t => {
+    if (!cats[t.categorie]) cats[t.categorie] = [];
+    cats[t.categorie].push(t);
+  });
+
+  let html = '';
+  Object.keys(cats).forEach(cat => {
+    html += `<p class="category-label">${cat}</p>`;
+    cats[cat].forEach(t => {
+      html += `
+        <div class="rdv-card" style="margin-bottom:8px;">
+          <div class="rdv-info">
+            <div class="rdv-client">${t.nom}</div>
+            <div class="rdv-detail">${t.description || ''} · ${t.duree || ''}</div>
+          </div>
+          <div class="rdv-badge">${t.prix}€</div>
+          <button class="btn-delete" onclick="deleteTarif('${t.categorie}','${t.nom}')">✕</button>
+        </div>`;
+    });
+  });
+  c.innerHTML = html;
+}
+
+function showAddTarif() {
+  document.getElementById('tarif-add-form').style.display = 'block';
+}
+
+function hideAddTarif() {
+  document.getElementById('tarif-add-form').style.display = 'none';
+}
+
+async function saveTarif() {
+  const cat = document.getElementById('tarif-cat').value;
+  const nom = document.getElementById('tarif-nom').value.trim();
+  const desc = document.getElementById('tarif-desc').value.trim();
+  const prix = document.getElementById('tarif-prix').value.trim();
+  const duree = document.getElementById('tarif-duree').value.trim();
+  if (!nom || !prix) { showToast('Nom et prix requis'); return; }
+  showToast('Ajout...');
+  try {
+    await apiCall({ action:'addTarif', categorie:cat, nom, description:desc, prix, duree });
+    tarifsCache = null;
+    hideAddTarif();
+    renderTarifsPro();
+    showToast('Tarif ajoute !');
+  } catch(e) { showToast('Erreur'); }
+}
+
+async function deleteTarif(cat, nom) {
+  showToast('Suppression...');
+  try {
+    await apiCall({ action:'deleteTarif', categorie:cat, nom });
+    tarifsCache = null;
+    renderTarifsPro();
+    showToast('Tarif supprime');
+  } catch(e) { showToast('Erreur'); }
+}
+async function animateStats() {
+  // Récupérer le vrai nombre de RDV
+  let nbClients = 0;
+  let nbRdvs = 0;
+  try {
+    const rdvs = await getRdvs(true);
+    nbRdvs = rdvs.length;
+    // Clients uniques
+    const uniqueClients = new Set(rdvs.map(r => String(r.nom||'').trim().toLowerCase()).filter(n => n));
+    nbClients = uniqueClients.size;
+  } catch(e) {}
+
+  // Mettre à jour les targets
+  const targets = {
+    0: 3,         // coiffeuses
+    1: nbClients, // vrais clients uniques
+    2: 8,         // ans
+    3: 1          // salon
+  };
+
+  const stats = document.querySelectorAll('.stat-count');
+  stats.forEach((el, i) => {
+    const target = targets[i] || 0;
+    el.dataset.target = target;
+    const duration = 2000;
+    const start = Date.now();
+    function update() {
+      const elapsed = Date.now() - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      const current = Math.round(target * ease);
+      el.textContent = current >= 1000 ? current.toLocaleString('fr-FR') : current;
+      if (progress < 1) requestAnimationFrame(update);
+    }
+    update();
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => animateStats(), 500);
+});
+
+// ===== TOAST =====
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
